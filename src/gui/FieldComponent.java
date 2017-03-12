@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.util.*;
 
 /**
  * Created by Danil on 05.03.2016.
@@ -17,7 +18,7 @@ public class FieldComponent extends JPanel {
 
     private static final double scale = 5.0;
 
-    private Player player;
+    private java.util.List<Player> players;
     private Ball ball;
 
     public static final double playerShapeWidth = 25;
@@ -32,7 +33,11 @@ public class FieldComponent extends JPanel {
      */
     public void addPlayer(Player player)
     {
-        this.player = player;
+        if (players == null) {
+            players = new ArrayList<Player>();
+        }
+        players.add(player);
+
     }
 
     /**
@@ -47,10 +52,10 @@ public class FieldComponent extends JPanel {
     /**
      * Gets the shape of the player at its current position.
      */
-    public Ellipse2D getPlayerShape()
+    public Ellipse2D getPlayerShape(Player player)
     {
-        return new Ellipse2D.Double(getPlayerShapePosX(),
-                getPlayerShapePosY(), playerShapeWidth, playerShapeHeight);
+        return new Ellipse2D.Double(getPlayerShapePosX(player),
+                getPlayerShapePosY(player), playerShapeWidth, playerShapeHeight);
     }
 
     /**
@@ -67,16 +72,18 @@ public class FieldComponent extends JPanel {
         super.paintComponent(g); // erase background
         Graphics2D g2 = (Graphics2D) g;
         //сглаживание фигуры при рисовании
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-        //градиет для игрока, чтобы определить, где лицо
-        GradientPaint blackToWhite = new GradientPaint(getPointP1(), Color.black,
-                getPointP2(), Color.white);
-        g2.setPaint(blackToWhite);
-        g2.fill(getPlayerShape());
-        //обрисовка круга линеей
-        g2.setStroke(new BasicStroke(1f));
-        g2.setColor(Color.black);
-        g2.draw(getPlayerShape());
+        for (Player player: players) {
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            //градиет для игрока, чтобы определить, где лицо
+            GradientPaint blackToWhite = new GradientPaint(getPointP1(player), Color.black,
+                    getPointP2(player), Color.white);
+            g2.setPaint(blackToWhite);
+            g2.fill(getPlayerShape(player));
+            //обрисовка круга линеей
+            g2.setStroke(new BasicStroke(1f));
+            g2.setColor(Color.black);
+            g2.draw(getPlayerShape(player));
+        }
         //рисование мяча
         g2.setColor(Color.black);
         g2.fill(getBallShape());
@@ -87,11 +94,11 @@ public class FieldComponent extends JPanel {
 
     public Dimension getPreferredSize() { return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT); }
 
-    public double getPlayerShapePosX() {
+    public double getPlayerShapePosX(Player player) {
         return player.getPosX()*scale-playerShapeWidth/2 + DEFAULT_WIDTH/2;
     }
 
-    public double getPlayerShapePosY() {
+    public double getPlayerShapePosY(Player player) {
         return player.getPosY()*scale-playerShapeHeight/2 + DEFAULT_HEIGHT/2;
     }
 
@@ -103,7 +110,7 @@ public class FieldComponent extends JPanel {
      * Вычисление координат первой точки для отрисовки градиента
      * @return точка (тыльная сторона игрока)
      */
-    public Point2D getPointP1() {
+    public Point2D getPointP1(Player player) {
         double angle = player.getGlobalBodyAngle();
         double posX = 0;
         double posY = 0;
@@ -135,7 +142,7 @@ public class FieldComponent extends JPanel {
      * Вычисление координат второй точки для отрисовки градиента
      * @return точка (передная сторона игрока)
      */
-    public Point2D getPointP2() {
+    public Point2D getPointP2(Player player) {
         double angle = player.getGlobalBodyAngle();
         double posX = 0;
         double posY = 0;

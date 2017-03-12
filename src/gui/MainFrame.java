@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * Created by Danil on 05.03.2016.
@@ -47,7 +48,10 @@ public class MainFrame extends JFrame {
         manager = new Manager();
         logs = new Logs();
         fieldComponent = new FieldComponent();
-        fieldComponent.addPlayer(manager.getServerImitator().getServerPlayer());
+        java.util.List<ServerPlayer> serverPlayers = manager.getServerImitator().getServerPlayers();
+        for (Player player: serverPlayers) {
+            fieldComponent.addPlayer(player);
+        }
         fieldComponent.addBall(manager.getServerImitator().getBall());
         createVerticalBox();
     }
@@ -225,8 +229,8 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Player player = manager.getAgentPlayer();
-                player.updateBodySense(manager.getServerImitator().sendSenseMessage());
-                player.updateSeeSense(manager.getServerImitator().sendSeeMessage());
+                player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
+                player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
                 FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
                 manager.setAction(player.dashToPoint(point));
                 System.out.println("dash: currentBallVelocity = " + manager.getAgentPlayer().getCurrentBallVelocity().getX());
@@ -247,8 +251,8 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Player player = manager.getAgentPlayer();
-                player.updateBodySense(manager.getServerImitator().sendSenseMessage());
-                player.updateSeeSense(manager.getServerImitator().sendSeeMessage());
+                player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
+                player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
                /* manager.getAction().setActionType("turn");
                 manager.getAction().setMoment(((Number)textFieldPlayerAngle.getValue()).doubleValue());
                 manager.getServerImitator().simulationStep(manager.getAction());*/
@@ -292,7 +296,7 @@ public class MainFrame extends JFrame {
                         refreshPlayerInfo();
                         refreshBallInfo();
 
-                        logs.writeLog(manager.getServerImitator().getServerPlayer(), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
+                        logs.writeLog(manager.getServerImitator().getServerPlayers().get(0), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
                         paintShapes();
                         if (manager.getServerImitator().isIntercept()) {
                             JOptionPane.showMessageDialog(null, "Ball is intercepted");
@@ -331,7 +335,7 @@ public class MainFrame extends JFrame {
                     }
                     refreshPlayerInfo();
                     refreshBallInfo();
-                    logs.writeLog(manager.getServerImitator().getServerPlayer(), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
+                    logs.writeLog(manager.getServerImitator().getServerPlayers().get(0), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
                     paintShapes();
                 }
             }
@@ -369,7 +373,7 @@ public class MainFrame extends JFrame {
     }
 
     public void setPlayerInfo() {
-        Player player = manager.getServerImitator().getServerPlayer();
+        Player player = manager.getServerImitator().getServerPlayers().get(0);
         Number number = (Number)textFieldPlayerPosX.getValue();
         player.setPosX(number.doubleValue());
         number = (Number)textFieldPlayerPosY.getValue();
@@ -432,10 +436,10 @@ public class MainFrame extends JFrame {
     }
 
     public void refreshPlayerInfo() {
-        textFieldPlayerPosX.setValue(manager.getServerImitator().getServerPlayer().getPosX());
-        textFieldPlayerPosY.setValue(manager.getServerImitator().getServerPlayer().getPosY());
-        textFieldPlayerAngle.setValue(manager.getServerImitator().getServerPlayer().getGlobalBodyAngle());
-        textFieldPlayerVelocity.setValue(MyMath.velocityModule(manager.getServerImitator().getServerPlayer().getGlobalVelocity()));
+        textFieldPlayerPosX.setValue(manager.getServerImitator().getServerPlayers().get(0).getPosX());
+        textFieldPlayerPosY.setValue(manager.getServerImitator().getServerPlayers().get(0).getPosY());
+        textFieldPlayerAngle.setValue(manager.getServerImitator().getServerPlayers().get(0).getGlobalBodyAngle());
+        textFieldPlayerVelocity.setValue(MyMath.velocityModule(manager.getServerImitator().getServerPlayers().get(0).getGlobalVelocity()));
     }
 
     public void refreshBallInfo() {

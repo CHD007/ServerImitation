@@ -9,15 +9,20 @@ import server.ServerImitator;
  */
 public class Manager {
     private Player agentPlayer;
+    private Player agentPlayer2;
     private Action action;
+    private Action actionOfSecondPlayer;
     private ServerImitator serverImitator;
 
     public Manager() {
         serverImitator = new ServerImitator();
         agentPlayer = new Player();
         agentPlayer.setGlobalBodyAngle(0);
+        agentPlayer2 = new Player();
         serverImitator.connectToServer(agentPlayer);
+        serverImitator.connectToServer(agentPlayer2);
         action = new Action();
+        actionOfSecondPlayer = new Action();
     }
 
     public Action getAction() {

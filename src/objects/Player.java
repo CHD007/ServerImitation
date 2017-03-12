@@ -9,6 +9,9 @@ import server.ServerParameters;
  * Created by Danil on 27.02.2016.
  */
 public class Player extends MobileObject {
+    private static int PLAYERS_NUMBER = 0;
+    private int playerId;
+
     private double globalBodyAngle;
     private Action action;
     private double effort;
@@ -41,6 +44,7 @@ public class Player extends MobileObject {
 
 
     public Player() {
+        playerId = PLAYERS_NUMBER++;
         globalBodyAngle = 0;
         ballPosX = 0;
         ballPosY = 0;
@@ -66,6 +70,10 @@ public class Player extends MobileObject {
         oldBallPosY = player.getOldBallPosY();
 
         currentBallVelocity = new Velocity(player.getCurrentBallVelocity());
+    }
+
+    public int getPlayerId() {
+        return playerId;
     }
 
     public void turn(double angle) {
@@ -229,7 +237,6 @@ public class Player extends MobileObject {
         double relativeX = MyMath.relativeX(getPosX(), getPosY(), point.getPosX(), point.getPosY(), getGlobalBodyAngle());
         double relativeY = MyMath.relativeY(getPosX(), getPosY(), point.getPosX(), point.getPosY(), getGlobalBodyAngle());
         double power = getPowerForDash(relativeX, relativeY);
-        Action action = new Action();
         action.setActionType("dash");
         action.setPower(power);
         return action;
