@@ -233,9 +233,10 @@ public class MainFrame extends JFrame {
                 player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
                 FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
                 manager.setAction(player.dashToPoint(point));
+                manager.getAgentPlayer().setAction(manager.getAction());
                 System.out.println("dash: currentBallVelocity = " + manager.getAgentPlayer().getCurrentBallVelocity().getX());
                 System.out.println("dash: " + manager.getAgentPlayer().predictedBallPosX(10));
-                manager.getServerImitator().simulationStep(manager.getAction());
+                manager.getServerImitator().simulationStep();
                 refreshPlayerInfo();
                 refreshBallInfo();
                 paintShapes();
@@ -258,7 +259,8 @@ public class MainFrame extends JFrame {
                 manager.getServerImitator().simulationStep(manager.getAction());*/
                 FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
                 manager.setAction(player.turnBodyToPoint(point));
-                manager.getServerImitator().simulationStep(manager.getAction());
+                manager.getAgentPlayer().setAction(manager.getAction());
+                manager.getServerImitator().simulationStep();
                 refreshPlayerInfo();
                 refreshBallInfo();
                 paintShapes();
@@ -288,8 +290,9 @@ public class MainFrame extends JFrame {
                 switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
                     case INTERSEPT:
                         Action action = manager.getAgentPlayer().intercept();
+                        manager.getAgentPlayer().setAction(action);
                         if (action != null) {
-                            manager.getServerImitator().simulationStep(action);
+                            manager.getServerImitator().simulationStep();
                         } else {
                             JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
                         }
@@ -328,8 +331,11 @@ public class MainFrame extends JFrame {
                 Action action;
                 while (!manager.getServerImitator().isIntercept()) {
                     action = manager.getAgentPlayer().intercept();
+                    // // TODO: 12.03.2017 зарефакторить функционал, связанный с manager и action
+                    manager.getAgentPlayer().setAction(action);
+                    manager.getAgentPlayer2().setAction(manager.getAgentPlayer2().intercept());
                     if (action != null) {
-                        manager.getServerImitator().simulationStep(action);
+                        manager.getServerImitator().simulationStep();
                     } else {
                         JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
                     }

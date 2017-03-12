@@ -44,11 +44,14 @@ public class ServerImitator {
     /**
      * Цикл моделирования
      */
-    public void simulationStep(Action action) {
+    public void simulationStep() {
         for (ServerPlayer serverPlayer: serverPlayers) {
             //исполнение желаемого действия игрока
-            System.out.println("simulationStep() action = " + action.getActionType());
-            action(serverPlayer, action);
+            Action action = serverPlayer.getAgentPlayer().getAction();
+            if (action != null && action.getActionType() != null) {
+                System.out.println("simulationStep() action = " + action.getActionType());
+                action(serverPlayer, action);
+            }
             //перемещение объектов
             changePosition(serverPlayer);
             changePosition(ball);

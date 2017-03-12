@@ -44,4 +44,8 @@ public class Manager {
     public Player getAgentPlayer() {
         return agentPlayer;
     }
+
+    public Player getAgentPlayer2() {
+        return agentPlayer2;
+    }
 }

@@ -72,6 +72,14 @@ public class Player extends MobileObject {
         currentBallVelocity = new Velocity(player.getCurrentBallVelocity());
     }
 
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
     public int getPlayerId() {
         return playerId;
     }
