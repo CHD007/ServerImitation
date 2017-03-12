@@ -6,6 +6,7 @@ import objects.Action;
 import server.MyMath;
 import server.ServerParameters;
 import uml.Manager;
+import utils.ActionsEnum;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -26,6 +27,7 @@ public class MainFrame extends JFrame {
     private JFormattedTextField textFieldBallPosY;
     private JFormattedTextField textFieldBallVelocity;
     private JFormattedTextField textFieldBallAngle;
+    private JComboBox actionComboBox;
     private JCheckBox autoSimulationCheckBox;
     private JButton startButton;
     private JButton dashButton;
@@ -124,8 +126,26 @@ public class MainFrame extends JFrame {
         return objectInfoBox;
     }
 
-    public Box createButtonsBox() {
+    private void initializeActionComboBox() {
+        actionComboBox = new JComboBox();
+        for (ActionsEnum actionsEnum: ActionsEnum.values()) {
+            actionComboBox.addItem(actionsEnum);
+        }
+        actionComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+    }
+
+    private Box createButtonsBox() {
         Box box = Box.createHorizontalBox();
+        box.add(Box.createHorizontalStrut(10));
+        initializeActionComboBox();
+        box.add(actionComboBox);
+        box.add(Box.createHorizontalStrut(10));
+
         autoSimulationCheckBox = new JCheckBox("Выполнение по шагам");
         autoSimulationCheckBox.setSelected(false);
         autoSimulationCheckBox.addActionListener(new ActionListener() {
@@ -201,19 +221,35 @@ public class MainFrame extends JFrame {
                 System.out.println("power = " + power);
                 manager.getAction().setPower(power);*/
                 //проверка алгоритма перехвата
-                Action action = manager.getAgentPlayer().intercept();
-                if (action != null) {
-                    manager.getServerImitator().simulationStep(action);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
-                }
-                refreshPlayerInfo();
-                refreshBallInfo();
+                switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
+                    case INTERSEPT:
+                        Action action = manager.getAgentPlayer().intercept();
+                        if (action != null) {
+                            manager.getServerImitator().simulationStep(action);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
+                        }
+                        refreshPlayerInfo();
+                        refreshBallInfo();
 
-                logs.writeLog(manager.getServerImitator().getServerPlayer(), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
-                paintShapes();
-                if (manager.getServerImitator().isIntercept()) {
-                    JOptionPane.showMessageDialog(null, "Ball is intercepted");
+                        logs.writeLog(manager.getServerImitator().getServerPlayer(), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
+                        paintShapes();
+                        if (manager.getServerImitator().isIntercept()) {
+                            JOptionPane.showMessageDialog(null, "Ball is intercepted");
+                        }
+                        break;
+
+                    case PASS:
+                        JOptionPane.showMessageDialog(null, "Pass algorithm");
+                        break;
+
+                    case DRIBBLING:
+                        JOptionPane.showMessageDialog(null, "Dribbling algorithm");
+                        break;
+
+                    case MARK_OPPONENT:
+                        JOptionPane.showMessageDialog(null, "Mark opponent algorithm");
+                        break;
                 }
             }
         });
