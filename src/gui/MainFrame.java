@@ -25,6 +25,9 @@ public class MainFrame extends JFrame {
     private JFormattedTextField textFieldPlayerAngle;
     private JFormattedTextField textFieldBallPosX;
     private JFormattedTextField textFieldBallPosY;
+    private JFormattedTextField textFieldPointForPassPosX;
+    private JFormattedTextField textFieldPointForPassPosY;
+    private JFormattedTextField textFieldTactsNumber;
     private JFormattedTextField textFieldBallVelocity;
     private JFormattedTextField textFieldBallAngle;
     private JComboBox actionComboBox;
@@ -66,6 +69,8 @@ public class MainFrame extends JFrame {
         Box box = Box.createVerticalBox();
         box.add(createObjectInfoBox());
         box.add(Box.createVerticalStrut(10));
+        box.add(createInitialDataBox());
+        box.add(Box.createVerticalStrut(10));
         box.add(createButtonsBox());
         box.add(Box.createVerticalStrut(10));
         box.add(createFieldBox());
@@ -102,6 +107,19 @@ public class MainFrame extends JFrame {
         return box1;
     }
 
+    public Box createInitialDataBox() {
+        Box box1 = Box.createHorizontalBox();
+        textFieldPointForPassPosX = new JFormattedTextField(NumberFormat.getNumberInstance());
+        textFieldPointForPassPosX.setColumns(4);
+        textFieldPointForPassPosY = new JFormattedTextField(NumberFormat.getNumberInstance());
+        textFieldPointForPassPosY.setColumns(4);
+        textFieldTactsNumber = new JFormattedTextField(NumberFormat.getNumberInstance());
+        textFieldTactsNumber.setColumns(4);
+        box1.add(initialDataBox("Параметры для выбранного действия", textFieldPointForPassPosX,
+                textFieldPointForPassPosY, textFieldTactsNumber));
+        return box1;
+    }
+
     public Box objectInfoBox(String objectName, JFormattedTextField x, JFormattedTextField y,
                              JFormattedTextField speed, JFormattedTextField angle) {
         Box objectInfoBox = Box.createHorizontalBox();
@@ -124,6 +142,48 @@ public class MainFrame extends JFrame {
         objectInfoBox.add(angle);
 
         return objectInfoBox;
+    }
+
+    /**
+     * Создает Box для исходный данных одного из действий
+     * @param objectName название этого бокса
+     * @param x поле для ввода x координаты точки
+     * @param y поле для ввода y координаты точки
+     * @param tactsNumber поле для ввода кол-ва тактов, за которое мяч должен достичь заданной точки
+     * @return
+     */
+    private Box initialDataBox(String objectName, JFormattedTextField x, JFormattedTextField y,
+                               JFormattedTextField tactsNumber) {
+        Box objectInfoBox = Box.createHorizontalBox();
+        TitledBorder title = BorderFactory.createTitledBorder(objectName);
+        objectInfoBox.setBorder(title);
+
+        objectInfoBox.add(new JLabel("X: "));
+        objectInfoBox.add(x);
+
+        objectInfoBox.add(Box.createHorizontalStrut(10));
+        objectInfoBox.add(new JLabel("Y: "));
+        objectInfoBox.add(y);
+
+        objectInfoBox.add(Box.createHorizontalStrut(10));
+        objectInfoBox.add(new JLabel("Кол-во тактов: "));
+        objectInfoBox.add(tactsNumber);
+        return objectInfoBox;
+    }
+
+    private boolean validateInitialDataBox() {
+        if (textFieldPointForPassPosX.getValue() == null) {
+            JOptionPane.showMessageDialog(null, "Не заполнено поле x для выбранного действия");
+            return false;
+        } else if (textFieldPointForPassPosY.getValue() == null) {
+            JOptionPane.showMessageDialog(null, "Не заполнено поле y для выбранного действия");
+            return false;
+        } else if (textFieldTactsNumber.getValue() == null) {
+            JOptionPane.showMessageDialog(null,
+                    "Не заполнено поле \"Кол-во тактов\" для выбранного действия");
+            return false;
+        }
+        return true;
     }
 
     private void initializeActionComboBox() {
@@ -240,7 +300,9 @@ public class MainFrame extends JFrame {
                         break;
 
                     case PASS:
-                        JOptionPane.showMessageDialog(null, "Pass algorithm");
+                        if (validateInitialDataBox()) {
+                            JOptionPane.showMessageDialog(null, "Pass algorithm");
+                        }
                         break;
 
                     case DRIBBLING:

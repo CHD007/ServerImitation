@@ -78,13 +78,15 @@ public class ServerImitator {
      * @param action действие, которое совершает игрок
      */
     public void action(Player player, Action action) {
-        switch (action.getActionType()){
-            case "turn":
-                changePlayerGlobalAngle(player, action);
-                break;
-            case "dash":
-                changePlayerVelocity(player, action);
-                break;
+        if (action != null) {
+            switch (action.getActionType()) {
+                case "turn":
+                    changePlayerGlobalAngle(player, action);
+                    break;
+                case "dash":
+                    changePlayerVelocity(player, action);
+                    break;
+            }
         }
     }
 
