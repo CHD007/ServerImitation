@@ -237,6 +237,7 @@ public class Player extends MobileObject {
         double relativeX = MyMath.relativeX(getPosX(), getPosY(), point.getPosX(), point.getPosY(), getGlobalBodyAngle());
         double relativeY = MyMath.relativeY(getPosX(), getPosY(), point.getPosX(), point.getPosY(), getGlobalBodyAngle());
         double power = getPowerForDash(relativeX, relativeY);
+        Action action = new Action();
         action.setActionType("dash");
         action.setPower(power);
         return action;
