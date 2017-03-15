@@ -115,7 +115,7 @@ public class ServerImitator {
                     changePlayerVelocity(player, action);
                     break;
                 case "kick":
-
+                    changeBallVelocity(player, action.getPower(), action.getMoment());
                     break;
             }
         }
