@@ -217,117 +217,30 @@ public class MainFrame extends JFrame {
         });
         box.add(autoSimulationCheckBox);
         box.add(Box.createHorizontalStrut(10));
+
         startButton = new JButton("Подготовить");
         startButton.setToolTipText("Установка начального положения игроков и мяча");
         startButton.addActionListener(new BtnStartListener());
         box.add(startButton);
         box.add(Box.createHorizontalStrut(10));
         dashButton = new JButton("dash");
-        dashButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Player player = manager.getAgentPlayer();
-                player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
-                player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
-                FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
-                manager.getAgentPlayer().setAction(player.dashToPoint(point));
-                System.out.println("dash: currentBallVelocity = " + manager.getAgentPlayer().getCurrentBallVelocity().getX());
-                System.out.println("dash: " + manager.getAgentPlayer().predictedBallPosX(10));
-                manager.getServerImitator().simulationStep();
-                refreshPlayerInfo();
-                refreshBallInfo();
-                paintShapes();
-                if (manager.getServerImitator().isIntercept()) {
-                    JOptionPane.showMessageDialog(null, "Ball is intercepted");
-                }
-            }
-        });
+        dashButton.addActionListener(new BtnDashListener());
         box.add(dashButton);
         box.add(Box.createHorizontalStrut(10));
+
         turnButton = new JButton("turn");
-        turnButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Player player = manager.getAgentPlayer();
-                player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
-                player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
-                FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
-                manager.getAgentPlayer().setAction(player.turnBodyToPoint(point));
-                manager.getServerImitator().simulationStep();
-                refreshPlayerInfo();
-                refreshBallInfo();
-                paintShapes();
-                if (manager.getServerImitator().isIntercept()) {
-                    JOptionPane.showMessageDialog(null, "Ball is intercepted");
-                }
-            }
-        });
+        turnButton.addActionListener(new BtnTurnListener());
         box.add(turnButton);
         box.add(Box.createHorizontalStrut(10));
+
         stepButton = new JButton("step");
         stepButton.setEnabled(autoSimulationCheckBox.isSelected());
-        stepButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //проверка алгоритма перехвата
-                switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
-                    case INTERSEPT:
-                        Action action = manager.getAgentPlayer().intercept();
-                        manager.getAgentPlayer().setAction(action);
-                        if (action != null) {
-                            manager.getServerImitator().simulationStep();
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
-                        }
-                        refreshPlayerInfo();
-                        refreshBallInfo();
-
-                        logs.writeLog(manager.getServerImitator().getServerPlayers().get(0), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
-                        paintShapes();
-                        if (manager.getServerImitator().isIntercept()) {
-                            JOptionPane.showMessageDialog(null, "Ball is intercepted");
-                        }
-                        break;
-
-                    case PASS:
-                        if (validateInitialDataBox()) {
-                            JOptionPane.showMessageDialog(null, "Pass algorithm");
-                        }
-                        break;
-
-                    case DRIBBLING:
-                        JOptionPane.showMessageDialog(null, "Dribbling algorithm");
-                        break;
-
-                    case MARK_OPPONENT:
-                        JOptionPane.showMessageDialog(null, "Mark opponent algorithm");
-                        break;
-                }
-            }
-        });
+        stepButton.addActionListener(new BtnStepListener());
         box.add(stepButton);
         box.add(Box.createHorizontalStrut(10));
+
         interceptButton = new JButton("Intercept");
-        interceptButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Action action;
-                while (!manager.getServerImitator().isIntercept()) {
-                    action = manager.getAgentPlayer().intercept();
-                    manager.getAgentPlayer().setAction(action);
-                    manager.getAgentPlayer2().setAction(manager.getAgentPlayer2().intercept());
-                    if (action != null) {
-                        manager.getServerImitator().simulationStep();
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
-                    }
-                    refreshPlayerInfo();
-                    refreshBallInfo();
-                    logs.writeLog(manager.getServerImitator().getServerPlayers().get(0), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
-                    paintShapes();
-                }
-            }
-        });
+        interceptButton.addActionListener(new BtnRunAlgorithmListener());
         box.add(interceptButton);
         box.add(Box.createHorizontalGlue());
         return box;
@@ -356,6 +269,105 @@ public class MainFrame extends JFrame {
             paintShapes();
             if (manager.getServerImitator().isIntercept()) {
                 JOptionPane.showMessageDialog(null, "Ball is intercepted");
+            }
+        }
+    }
+
+    public class BtnDashListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Player player = manager.getAgentPlayer();
+            player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
+            player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
+            FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
+            manager.getAgentPlayer().setAction(player.dashToPoint(point));
+            System.out.println("dash: currentBallVelocity = " + manager.getAgentPlayer().getCurrentBallVelocity().getX());
+            System.out.println("dash: " + manager.getAgentPlayer().predictedBallPosX(10));
+            manager.getServerImitator().simulationStep();
+            refreshPlayerInfo();
+            refreshBallInfo();
+            paintShapes();
+            if (manager.getServerImitator().isIntercept()) {
+                JOptionPane.showMessageDialog(null, "Ball is intercepted");
+            }
+        }
+    }
+
+    public class BtnTurnListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Player player = manager.getAgentPlayer();
+            player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
+            player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
+            FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
+            manager.getAgentPlayer().setAction(player.turnBodyToPoint(point));
+            manager.getServerImitator().simulationStep();
+            refreshPlayerInfo();
+            refreshBallInfo();
+            paintShapes();
+            if (manager.getServerImitator().isIntercept()) {
+                JOptionPane.showMessageDialog(null, "Ball is intercepted");
+            }
+        }
+    }
+
+    public class BtnStepListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //проверка алгоритма перехвата
+            switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
+                case INTERSEPT:
+                    Action action = manager.getAgentPlayer().intercept();
+                    manager.getAgentPlayer().setAction(action);
+                    if (action != null) {
+                        manager.getServerImitator().simulationStep();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
+                    }
+                    refreshPlayerInfo();
+                    refreshBallInfo();
+
+                    logs.writeLog(manager.getServerImitator().getServerPlayers().get(0), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
+                    paintShapes();
+                    if (manager.getServerImitator().isIntercept()) {
+                        JOptionPane.showMessageDialog(null, "Ball is intercepted");
+                    }
+                    break;
+
+                case PASS:
+                    if (validateInitialDataBox()) {
+                        JOptionPane.showMessageDialog(null, "Pass algorithm");
+                    }
+                    break;
+
+                case DRIBBLING:
+                    JOptionPane.showMessageDialog(null, "Dribbling algorithm");
+                    break;
+
+                case MARK_OPPONENT:
+                    JOptionPane.showMessageDialog(null, "Mark opponent algorithm");
+                    break;
+            }
+        }
+    }
+
+    public class BtnRunAlgorithmListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Action action;
+            while (!manager.getServerImitator().isIntercept()) {
+                action = manager.getAgentPlayer().intercept();
+                manager.getAgentPlayer().setAction(action);
+                manager.getAgentPlayer2().setAction(manager.getAgentPlayer2().intercept());
+                if (action != null) {
+                    manager.getServerImitator().simulationStep();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
+                }
+                refreshPlayerInfo();
+                refreshBallInfo();
+                logs.writeLog(manager.getServerImitator().getServerPlayers().get(0), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
+                paintShapes();
             }
         }
     }
