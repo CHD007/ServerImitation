@@ -14,7 +14,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
-import java.util.*;
 
 /**
  * Created by Danil on 05.03.2016.
@@ -63,13 +62,7 @@ public class MainFrame extends JFrame {
      * Установка размера фрейма
      */
     public void setFrameSize() {
-//        Toolkit kit = Toolkit.getDefaultToolkit();
-//        Dimension screenSize = kit.getScreenSize();
-//        int screenHeight = screenSize.height;
-//        int screenWidth = screenSize.width;
-//        setSize(screenWidth / 2, screenHeight*5 / 8);
         setSize(WIDHT, HEIGHT);
-//        setLocationByPlatform(true);
     }
 
 
@@ -258,9 +251,6 @@ public class MainFrame extends JFrame {
                 Player player = manager.getAgentPlayer();
                 player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
                 player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
-               /* manager.getAction().setActionType("turn");
-                manager.getAction().setMoment(((Number)textFieldPlayerAngle.getValue()).doubleValue());
-                manager.getServerImitator().simulationStep(manager.getAction());*/
                 FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
                 manager.getAgentPlayer().setAction(player.turnBodyToPoint(point));
                 manager.getServerImitator().simulationStep();
@@ -279,16 +269,6 @@ public class MainFrame extends JFrame {
         stepButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                /*Player player = manager.getAgentPlayer();
-                player.updateBodySense(manager.getServerImitator().sendSenseMessage());
-                System.out.println("step: ");
-                player.updateSeeSense(manager.getServerImitator().sendSeeMessage());*/
-                /*manager.getAction().setActionType("dash");
-                double relX = MyMath.relativeX(player.getPosX(), player.getPosY(), 10, 10, player.getGlobalBodyAngle());
-                double relY = MyMath.relativeY(player.getPosX(), player.getPosY(), 10, 10, player.getGlobalBodyAngle());
-                double power = manager.getAgentPlayer().getPowerForDash(relX,relY);
-                System.out.println("power = " + power);
-                manager.getAction().setPower(power);*/
                 //проверка алгоритма перехвата
                 switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
                     case INTERSEPT:
@@ -334,7 +314,6 @@ public class MainFrame extends JFrame {
                 Action action;
                 while (!manager.getServerImitator().isIntercept()) {
                     action = manager.getAgentPlayer().intercept();
-                    // // TODO: 12.03.2017 зарефакторить функционал, связанный с manager и action
                     manager.getAgentPlayer().setAction(action);
                     manager.getAgentPlayer2().setAction(manager.getAgentPlayer2().intercept());
                     if (action != null) {
