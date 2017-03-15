@@ -114,7 +114,70 @@ public class ServerImitator {
                 case "dash":
                     changePlayerVelocity(player, action);
                     break;
+                case "kick":
+
+                    break;
             }
+        }
+    }
+
+    /**
+     * Проверяет, находится ли мяч в kickable area.
+     * Команда kick исполняется, только когда расстояние между центром мяча и центром игрока
+     * минус радиус игрока и радиус мяча лежит в пределах от 0 до kickable_margin.
+     * @param player игрок, для которого проверяется, находится ли мяч в kickable area
+     * @return true - если мяч находится в kickable area, false - инача
+     */
+    private boolean isBallKickableForPlayer(Player player) {
+        return  MyMath.distance(player, ball) <
+                (ServerParameters.ball_size + ServerParameters.player_size + ServerParameters.kickable_margin);
+    }
+
+    /**
+     * Действительная сила удара, в зависимости от взаимного расположения игрока и мяча
+     * @param player игрок, выполняющий удар по мячу
+     * @param power сила, с которой игрок хочет ударить по мячу
+     * @return действительная сила удара
+     */
+    private double actPowerForKick(Player player, double power) {
+        // угол между мячом и направлением поворота тела игрока
+        double angleBetweenTheBallAndPlayer = player.getAngleToPointRelativeToPlayer(ball);
+        // расстояние между мячом и игроком
+        double distanceBetweenTheBallAndPlayer = MyMath.distance(player, ball);
+        return power * (1 - 0.25*(angleBetweenTheBallAndPlayer/180) - 0.25*(distanceBetweenTheBallAndPlayer/ServerParameters.kickable_margin));
+    }
+
+    /**
+     * Ускорение мяча после удара
+     * @param player игрок, совершающий удар
+     * @param power сила, с которой игрок хочет ударить по мячу
+     * @param angle угол, в направлении которого игрок хочет ударить мяч
+     * @return ускорение мяча после удара
+     */
+    private Velocity ballAccelerationAfterKick(Player player, double power, double angle) {
+        Velocity acceleration = new Velocity();
+        acceleration.setX(actPowerForKick(player, power) * ServerParameters.kick_power_rate * Math.cos(Math.toRadians(angle)) + kkmax(kmax(power)));
+        acceleration.setY(actPowerForKick(player, power) * ServerParameters.kick_power_rate * Math.sin(Math.toRadians(angle)) + kkmax(kmax(power)));
+        if (MyMath.velocityModule(acceleration) > ServerParameters.ball_accel_max) {
+            MyMath.normalizeVector(acceleration);
+        }
+        return acceleration;
+    }
+
+    /**
+     * Изменение скорости мяча после удара
+     * @param player игрок, выполняющий удра
+     * @param power сила, с которой игрок хочет ударить по мячу
+     * @param angle угол, в направлении которого игрок хочет ударить по мячу
+     */
+    private void changeBallVelocity(Player player, double power, double angle) {
+        Velocity oldBallVelocity = ball.getGlobalVelocity();
+        Velocity acceleration = ballAccelerationAfterKick(player, power, angle);
+        double rrmax = rrmax(rmax(ball.getGlobalVelocity()));
+        ball.getGlobalVelocity().setX(oldBallVelocity.getX() + acceleration.getX() + rrmax);
+        ball.getGlobalVelocity().setY(oldBallVelocity.getY() + acceleration.getY() + rrmax);
+        if (MyMath.velocityModule(ball.getGlobalVelocity()) > ServerParameters.ball_speed_max) {
+            MyMath.normalizeVector(ball.getGlobalVelocity());
         }
     }
 
@@ -246,6 +309,26 @@ public class ServerImitator {
         double rrmax = -rmax + rnd.nextDouble()*(2*rmax);
         return rrmax;
     }
+
+    /**
+     * Граничные значения из промежутка [-kmax;kmax], из которого выбирается шум для удара
+     * @param power сила, с которой игрок хочет ударить по мячу
+     * @return kmax
+     */
+    private double kmax(double power) {
+        return ServerParameters.kick_rand*(power/ServerParameters.maxpower);
+    }
+
+    /**
+     * @param kmax граничные значения
+     * @return Шум к удару
+     */
+    private double kkmax(double kmax) {
+        Random rnd = new Random(System.currentTimeMillis());
+        double kkmax = -kmax + rnd.nextDouble()*(2*kmax);
+        return kkmax;
+    }
+
 
     /**
      * Перемещение объектов
