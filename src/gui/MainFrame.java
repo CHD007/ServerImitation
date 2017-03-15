@@ -43,6 +43,9 @@ public class MainFrame extends JFrame {
     private Manager manager;
     private Logs logs;
 
+    private final static int WIDHT = 1000;
+    private final static int HEIGHT = 700;
+
     public MainFrame() {
         setFrameSize();
         manager = new Manager();
@@ -60,12 +63,13 @@ public class MainFrame extends JFrame {
      * Установка размера фрейма
      */
     public void setFrameSize() {
-        Toolkit kit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = kit.getScreenSize();
-        int screenHeight = screenSize.height;
-        int screenWidth = screenSize.width;
-        setSize(screenWidth / 2, screenHeight*5 / 8);
-        setLocationByPlatform(true);
+//        Toolkit kit = Toolkit.getDefaultToolkit();
+//        Dimension screenSize = kit.getScreenSize();
+//        int screenHeight = screenSize.height;
+//        int screenWidth = screenSize.width;
+//        setSize(screenWidth / 2, screenHeight*5 / 8);
+        setSize(WIDHT, HEIGHT);
+//        setLocationByPlatform(true);
     }
 
 
@@ -220,7 +224,8 @@ public class MainFrame extends JFrame {
         });
         box.add(autoSimulationCheckBox);
         box.add(Box.createHorizontalStrut(10));
-        startButton = new JButton("Старт");
+        startButton = new JButton("Подготовить");
+        startButton.setToolTipText("Установка начального положения игроков и мяча");
         startButton.addActionListener(new BtnStartListener());
         box.add(startButton);
         box.add(Box.createHorizontalStrut(10));
@@ -232,8 +237,7 @@ public class MainFrame extends JFrame {
                 player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
                 player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
                 FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
-                manager.setAction(player.dashToPoint(point));
-                manager.getAgentPlayer().setAction(manager.getAction());
+                manager.getAgentPlayer().setAction(player.dashToPoint(point));
                 System.out.println("dash: currentBallVelocity = " + manager.getAgentPlayer().getCurrentBallVelocity().getX());
                 System.out.println("dash: " + manager.getAgentPlayer().predictedBallPosX(10));
                 manager.getServerImitator().simulationStep();
@@ -258,8 +262,7 @@ public class MainFrame extends JFrame {
                 manager.getAction().setMoment(((Number)textFieldPlayerAngle.getValue()).doubleValue());
                 manager.getServerImitator().simulationStep(manager.getAction());*/
                 FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
-                manager.setAction(player.turnBodyToPoint(point));
-                manager.getAgentPlayer().setAction(manager.getAction());
+                manager.getAgentPlayer().setAction(player.turnBodyToPoint(point));
                 manager.getServerImitator().simulationStep();
                 refreshPlayerInfo();
                 refreshBallInfo();
