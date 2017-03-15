@@ -146,6 +146,11 @@ public class Player extends MobileObject {
         return oldBallPosX;
     }
 
+    @Override
+    public String toString() {
+        return "Player " + playerId;
+    }
+
     /**
      * @param a желаемый угол поворота
      * @return величина угла, которая должна быть передана команде turn для поворота на желаемый угол a

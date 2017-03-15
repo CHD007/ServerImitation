@@ -36,6 +36,10 @@ public class Manager {
         this.serverImitator = serverImitator;
     }
 
+    public List<Player> getPlayerList() {
+        return playerList;
+    }
+
     /**
      * @return основной игрок для тестирования алгоритмов
      */

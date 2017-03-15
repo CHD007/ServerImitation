@@ -13,6 +13,8 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 
 /**
@@ -30,6 +32,7 @@ public class MainFrame extends JFrame {
     private JFormattedTextField textFieldTactsNumber;
     private JFormattedTextField textFieldBallVelocity;
     private JFormattedTextField textFieldBallAngle;
+    private JComboBox<Player> playersComboBox;
     private JComboBox actionComboBox;
     private JCheckBox autoSimulationCheckBox;
     private JButton startButton;
@@ -68,6 +71,9 @@ public class MainFrame extends JFrame {
 
     public void createVerticalBox() {
         Box box = Box.createVerticalBox();
+        box.add(Box.createVerticalStrut(10));
+        box.add(createPlayersSelectionBox());
+        box.add(Box.createVerticalStrut(10));
         box.add(createObjectInfoBox());
         box.add(Box.createVerticalStrut(10));
         box.add(createInitialDataBox());
@@ -78,6 +84,17 @@ public class MainFrame extends JFrame {
         box.add(Box.createVerticalStrut(10));
         box.add(Box.createVerticalGlue());
         add(box, BorderLayout.NORTH);
+    }
+
+    /**
+     * Перывый блок с комбобоксом игроков
+     */
+    private Box createPlayersSelectionBox() {
+        Box box = Box.createHorizontalBox();
+        initializePlayersComboBox();
+        box.add(playersComboBox);
+        box.add(Box.createHorizontalGlue());
+        return box;
     }
 
     public Box createObjectInfoBox() {
@@ -200,6 +217,20 @@ public class MainFrame extends JFrame {
         });
     }
 
+    private void initializePlayersComboBox() {
+        playersComboBox = new JComboBox<Player>();
+        for (Player player: manager.getPlayerList()) {
+            playersComboBox.addItem(player);
+        }
+
+        playersComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                refreshPlayerInfo();
+            }
+        });
+    }
+
     private Box createButtonsBox() {
         Box box = Box.createHorizontalBox();
         box.add(Box.createHorizontalStrut(10));
@@ -263,7 +294,8 @@ public class MainFrame extends JFrame {
     public class BtnStartListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            setPlayerInfo();
+            Player player = (Player) playersComboBox.getSelectedItem();
+            setPlayerInfo(manager.getServerImitator().findPlayerById(player.getPlayerId()));
             setBallInfo();
             manager.getServerImitator().beforeHalf();
             paintShapes();
@@ -372,8 +404,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    public void setPlayerInfo() {
-        Player player = manager.getServerImitator().getServerPlayers().get(0);
+    public void setPlayerInfo(Player player) {
         Number number = (Number)textFieldPlayerPosX.getValue();
         player.setPosX(number.doubleValue());
         number = (Number)textFieldPlayerPosY.getValue();
@@ -436,10 +467,12 @@ public class MainFrame extends JFrame {
     }
 
     public void refreshPlayerInfo() {
-        textFieldPlayerPosX.setValue(manager.getServerImitator().getServerPlayers().get(0).getPosX());
-        textFieldPlayerPosY.setValue(manager.getServerImitator().getServerPlayers().get(0).getPosY());
-        textFieldPlayerAngle.setValue(manager.getServerImitator().getServerPlayers().get(0).getGlobalBodyAngle());
-        textFieldPlayerVelocity.setValue(MyMath.velocityModule(manager.getServerImitator().getServerPlayers().get(0).getGlobalVelocity()));
+        Player player = (Player) playersComboBox.getSelectedItem();
+        Player playerToView = manager.getServerImitator().findPlayerById(player.getPlayerId());
+        textFieldPlayerPosX.setValue(playerToView.getPosX());
+        textFieldPlayerPosY.setValue(playerToView.getPosY());
+        textFieldPlayerAngle.setValue(playerToView.getGlobalBodyAngle());
+        textFieldPlayerVelocity.setValue(MyMath.velocityModule(playerToView.getGlobalVelocity()));
     }
 
     public void refreshBallInfo() {

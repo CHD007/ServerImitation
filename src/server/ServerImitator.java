@@ -42,6 +42,20 @@ public class ServerImitator {
     }
 
     /**
+     * Находит по id игрока, подключенного к серверу
+     * @param id id игрока, которого нужно найти
+     * @return игрок, если он найден, в противном случае - null
+     */
+    public Player findPlayerById(int id) {
+        for (ServerPlayer serverPlayer: serverPlayers) {
+            if (serverPlayer.getAgentPlayer().getPlayerId() == id) {
+                return serverPlayer;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Цикл моделирования
      */
     public void simulationStep() {
