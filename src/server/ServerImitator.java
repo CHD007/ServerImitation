@@ -171,13 +171,15 @@ public class ServerImitator {
      * @param angle угол, в направлении которого игрок хочет ударить по мячу
      */
     private void changeBallVelocity(Player player, double power, double angle) {
-        Velocity oldBallVelocity = ball.getGlobalVelocity();
-        Velocity acceleration = ballAccelerationAfterKick(player, power, angle);
-        double rrmax = rrmax(rmax(ball.getGlobalVelocity()));
-        ball.getGlobalVelocity().setX(oldBallVelocity.getX() + acceleration.getX() + rrmax);
-        ball.getGlobalVelocity().setY(oldBallVelocity.getY() + acceleration.getY() + rrmax);
-        if (MyMath.velocityModule(ball.getGlobalVelocity()) > ServerParameters.ball_speed_max) {
-            MyMath.normalizeVector(ball.getGlobalVelocity());
+        if (isBallKickableForPlayer(player)) {
+            Velocity oldBallVelocity = ball.getGlobalVelocity();
+            Velocity acceleration = ballAccelerationAfterKick(player, power, angle);
+            double rrmax = rrmax(rmax(ball.getGlobalVelocity()));
+            ball.getGlobalVelocity().setX(oldBallVelocity.getX() + acceleration.getX() + rrmax);
+            ball.getGlobalVelocity().setY(oldBallVelocity.getY() + acceleration.getY() + rrmax);
+            if (MyMath.velocityModule(ball.getGlobalVelocity()) > ServerParameters.ball_speed_max) {
+                MyMath.normalizeVector(ball.getGlobalVelocity());
+            }
         }
     }
 

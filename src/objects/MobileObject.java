@@ -1,5 +1,7 @@
 package objects;
 
+import server.MyMath;
+
 /**
  * Created by Danil on 27.02.2016.
  */
@@ -18,5 +20,9 @@ public class MobileObject extends FieldObject {
 
     public void setGlobalVelocity(Velocity globalVelocity) {
         this.globalVelocity = globalVelocity;
+    }
+
+    public boolean isZeroVelocity() {
+        return !(MyMath.velocityModule(globalVelocity) > 0);
     }
 }

@@ -368,7 +368,13 @@ public class MainFrame extends JFrame {
 
                 case PASS:
                     if (validateInitialDataBox()) {
-                        JOptionPane.showMessageDialog(null, "Pass algorithm");
+                        Action action1 = new Action();
+                        action1.setActionType("kick");
+                        action1.setPower(100);
+                        action1.setMoment(0);
+                        manager.getAgentPlayer().setAction(action1);
+                        manager.getServerImitator().simulationStep();
+                        paintShapes();
                     }
                     break;
 
@@ -386,20 +392,57 @@ public class MainFrame extends JFrame {
     public class BtnRunAlgorithmListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            Action action;
-            while (!manager.getServerImitator().isIntercept()) {
-                action = manager.getAgentPlayer().intercept();
-                manager.getAgentPlayer().setAction(action);
-                manager.getAgentPlayer2().setAction(manager.getAgentPlayer2().intercept());
-                if (action != null) {
-                    manager.getServerImitator().simulationStep();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
-                }
-                refreshPlayerInfo();
-                refreshBallInfo();
-                logs.writeLog(manager.getServerImitator().getServerPlayers().get(0), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
-                paintShapes();
+            //проверка алгоритма перехвата
+            switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
+                case INTERSEPT:
+                    Action action;
+                    while (!manager.getServerImitator().isIntercept()) {
+                        action = manager.getAgentPlayer().intercept();
+                        manager.getAgentPlayer().setAction(action);
+                        manager.getAgentPlayer2().setAction(manager.getAgentPlayer2().intercept());
+                        if (action != null) {
+                            manager.getServerImitator().simulationStep();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
+                        }
+                        refreshPlayerInfo();
+                        refreshBallInfo();
+                        logs.writeLog(manager.getServerImitator().getServerPlayers().get(0), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
+                        paintShapes();
+                    }
+                    break;
+
+                case PASS:
+                    if (validateInitialDataBox()) {
+                        if (manager.getServerImitator().getBall().isZeroVelocity()) {
+                            Action action1 = new Action();
+                            action1.setActionType("kick");
+                            action1.setPower(100);
+                            action1.setMoment(-45);
+                            manager.getAgentPlayer().setAction(action1);
+                            manager.getServerImitator().simulationStep();
+                            paintShapes();
+                        }
+                        while (!manager.getServerImitator().getBall().isZeroVelocity()) {
+                            manager.getAgentPlayer().setAction(null);
+                            manager.getServerImitator().simulationStep();
+                            paintShapes();
+                            try {
+                                Thread.sleep(200);
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
+                    break;
+
+                case DRIBBLING:
+                    JOptionPane.showMessageDialog(null, "Dribbling algorithm");
+                    break;
+
+                case MARK_OPPONENT:
+                    JOptionPane.showMessageDialog(null, "Mark opponent algorithm");
+                    break;
             }
         }
     }
