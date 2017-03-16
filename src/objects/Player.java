@@ -1,5 +1,6 @@
 package objects;
 
+import gui.MainFrame;
 import server.MyMath;
 import server.SeeMessage;
 import server.SenseMessage;
@@ -524,5 +525,41 @@ public class Player extends MobileObject {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Пас партнеру
+     * @param x глобальная координата x точки, в которую нужно ударить мяч
+     * @param y глобальная координата y точки, в которую нужно ударить мяч
+     * @param circles кол-во циклов симуляции
+     * @return
+     */
+    public Action pass(double x, double y, int circles) {
+        double relativeX = MyMath.relativeX(posX, posY, x, y, globalBodyAngle);
+        double relativeY = MyMath.relativeY(posX, posY, x, y, globalBodyAngle);
+
+        // расстояние между игроком и точкой, в которую нужно ударить мяч
+        double distanseBetweenPlayerAndPointForPass = Math.sqrt(Math.pow(Math.abs(x-posX), 2)
+                + Math.pow(Math.abs(y - posY), 2));
+        // скорость мяча после удара, такая, что мяч достигне указанную точку за circles циклов
+        double velocityModule = (2*distanseBetweenPlayerAndPointForPass + ServerParameters.ball_decay*Math.pow(circles, 2))/(2*circles);
+        // угол между мячом и направлением поворота тела игрока
+        FieldObject ball = new FieldObject(ballPosX, ballPosY);
+        double angleBetweenTheBallAndPlayer = getAngleToPointRelativeToPlayer(ball);
+        double distanceBetwennPlayerAndBall = MyMath.distance(this, ball);
+        // действительная сила удара
+        double actPower = ServerParameters.kick_power_rate * (1 - 0.25*angleBetweenTheBallAndPlayer/180
+                - 0.25*distanceBetwennPlayerAndBall/ServerParameters.kickable_margin);
+        // сила удара, передваемая команде kick
+        double kickPower = velocityModule/actPower;
+
+//        double angleForKick = Math.toDegrees(Math.acos(relativeX/distanseBetweenPlayerAndPointForPass));
+        double angleForKick = MyMath.polarAngle(relativeX, relativeY);
+
+        Action action = new Action();
+        action.setPower(kickPower);
+        action.setMoment(angleForKick);
+        action.setActionType("kick");
+        return action;
     }
 }

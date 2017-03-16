@@ -415,11 +415,17 @@ public class MainFrame extends JFrame {
                 case PASS:
                     if (validateInitialDataBox()) {
                         if (manager.getServerImitator().getBall().isZeroVelocity()) {
-                            Action action1 = new Action();
-                            action1.setActionType("kick");
-                            action1.setPower(100);
-                            action1.setMoment(-45);
-                            manager.getAgentPlayer().setAction(action1);
+//                            Action action1 = new Action();
+//                            action1.setActionType("kick");
+//                            action1.setPower(100);
+//                            action1.setMoment(-45);
+//                            manager.getAgentPlayer().setAction(action1);
+//                            manager.getServerImitator().simulationStep();
+//                            paintShapes();
+                            Number pointX = (Number)textFieldPointForPassPosX.getValue();
+                            Number pointY = (Number)textFieldPointForPassPosY.getValue();
+                            Number circles = (Number)textFieldTactsNumber.getValue();
+                            manager.getAgentPlayer().setAction(manager.getAgentPlayer().pass(pointX.doubleValue(), pointY.doubleValue(), circles.intValue()));
                             manager.getServerImitator().simulationStep();
                             paintShapes();
                         }
