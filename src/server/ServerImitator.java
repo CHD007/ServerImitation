@@ -38,6 +38,9 @@ public class ServerImitator {
             serverPlayer.setPosX(10);
         }
         serverPlayer.setAgentPlayer(agentPlayer);
+        serverPlayer.setEffort(ServerParameters.effort_max);
+        serverPlayer.setRecovery(ServerParameters.recover_max);
+        serverPlayer.setStamina(ServerParameters.stamina_max);
         serverPlayers.add(serverPlayer);
     }
 
@@ -75,9 +78,9 @@ public class ServerImitator {
             //восстановление запаса сил
             staminaRecovery(serverPlayer);
             //посылка sense и see сообщения
-            serverPlayer.getAgentPlayer().updateBodySense(sendSenseMessage(serverPlayer));
+            serverPlayer.getAgentPlayer().updateBodySense(sendSenseMessage(serverPlayer.getAgentPlayer()));
             System.out.println("serverImitator: ");
-            serverPlayer.getAgentPlayer().updateSeeSense(sendSeeMessage(serverPlayer));
+            serverPlayer.getAgentPlayer().updateSeeSense(sendSeeMessage(serverPlayer.getAgentPlayer()));
             //проверка методов предсказания игроком позиции мяча
        /* double pX = MyMath.unRelativeX(serverPlayer.getPosX(), serverPlayer.getPosY(),
                 serverPlayer.getAgentPlayer().predictedBallPosX(1), serverPlayer.getAgentPlayer().predictedBallPosY(1), serverPlayer.getGlobalBodyAngle());
@@ -399,8 +402,9 @@ public class ServerImitator {
         return senseMessage;
     }
 
-    public SeeMessage sendSeeMessage(Player serverPlayer) {
+    public SeeMessage sendSeeMessage(Player player) {
         SeeMessage seeMessage = new SeeMessage();
+        Player serverPlayer = findPlayerById(player.getPlayerId());
         seeMessage.setPlayerPosX(serverPlayer.getPosX());
         seeMessage.setPlayerPosY(serverPlayer.getPosY());
         seeMessage.setGlobalAngle(serverPlayer.getGlobalBodyAngle());

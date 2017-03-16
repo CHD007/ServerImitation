@@ -297,6 +297,8 @@ public class MainFrame extends JFrame {
             Player player = (Player) playersComboBox.getSelectedItem();
             setPlayerInfo(manager.getServerImitator().findPlayerById(player.getPlayerId()));
             setBallInfo();
+            player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
+            player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
             manager.getServerImitator().beforeHalf();
             paintShapes();
             if (manager.getServerImitator().isIntercept()) {
@@ -379,7 +381,15 @@ public class MainFrame extends JFrame {
                     break;
 
                 case DRIBBLING:
-                    JOptionPane.showMessageDialog(null, "Dribbling algorithm");
+                    if (validateInitialDataBox()) {
+                        Number pointX = (Number)textFieldPointForPassPosX.getValue();
+                        Number pointY = (Number)textFieldPointForPassPosY.getValue();
+                        Number circles = (Number)textFieldTactsNumber.getValue();
+                        Action action1 = manager.getAgentPlayer().dribbling(pointX.doubleValue(), pointY.doubleValue(), circles.intValue());
+                        manager.getAgentPlayer().setAction(action1);
+                        manager.getServerImitator().simulationStep();
+                        paintShapes();
+                    }
                     break;
 
                 case MARK_OPPONENT:
@@ -399,7 +409,7 @@ public class MainFrame extends JFrame {
                     while (!manager.getServerImitator().isIntercept()) {
                         action = manager.getAgentPlayer().intercept();
                         manager.getAgentPlayer().setAction(action);
-                        manager.getAgentPlayer2().setAction(manager.getAgentPlayer2().intercept());
+//                        manager.getAgentPlayer2().setAction(manager.getAgentPlayer2().intercept());
                         if (action != null) {
                             manager.getServerImitator().simulationStep();
                         } else {

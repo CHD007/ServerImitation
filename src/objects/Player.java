@@ -40,6 +40,8 @@ public class Player extends MobileObject {
     private double interceptMaxCycles = 200;
     private double turnCorrection = 3;
 
+    private boolean ballKicked;
+
     //глобальная скорость мяча
     private Velocity currentBallVelocity;
 
@@ -52,6 +54,7 @@ public class Player extends MobileObject {
         oldBallPosY = 0;
         oldBallPosY = 0;
         currentBallVelocity = new Velocity();
+        ballKicked = false;
         action = new Action();
     }
 
@@ -561,5 +564,29 @@ public class Player extends MobileObject {
         action.setMoment(angleForKick);
         action.setActionType("kick");
         return action;
+    }
+
+    /**
+     * Проверяет, находится ли мяч в kickable area.
+     * Команда kick исполняется, только когда расстояние между центром мяча и центром игрока
+     * минус радиус игрока и радиус мяча лежит в пределах от 0 до kickable_margin.
+     * @return true - если мяч находится в kickable area, false - инача
+     */
+    private boolean isBallKickableForPlayer() {
+        FieldObject ball = new FieldObject(ballPosX, ballPosY);
+        return  MyMath.distance(this, ball) <
+                (ServerParameters.ball_size + ServerParameters.player_size + ServerParameters.kickable_margin);
+    }
+
+    public Action dribbling(double x, double y, int circles) {
+        if (isBallKickableForPlayer() && !ballKicked) {
+            ballKicked = true;
+            return pass(x, y, circles-1);
+        } else {
+            Action action = new Action();
+            action.setActionType("dash");
+            action.setPower(getPowerForDash(x, y));
+            return action;
+        }
     }
 }

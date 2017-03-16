@@ -34,7 +34,7 @@ public class MyMath {
      * @return скорректированная сила рывка
      */
     public static double normalizePower(double power) {
-        if (power > ServerParameters.maxpower) {
+        if (power >= ServerParameters.maxpower) {
             return ServerParameters.maxpower;
         }
         else {
