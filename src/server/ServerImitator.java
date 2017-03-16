@@ -151,13 +151,14 @@ public class ServerImitator {
      * Ускорение мяча после удара
      * @param player игрок, совершающий удар
      * @param power сила, с которой игрок хочет ударить по мячу
-     * @param angle угол, в направлении которого игрок хочет ударить мяч
+     * @param angle угол (относительно игрока), в направлении которого игрок хочет ударить мяч
      * @return ускорение мяча после удара
      */
     private Velocity ballAccelerationAfterKick(Player player, double power, double angle) {
         Velocity acceleration = new Velocity();
-        acceleration.setX(actPowerForKick(player, power) * ServerParameters.kick_power_rate * Math.cos(Math.toRadians(angle)) + kkmax(kmax(power)));
-        acceleration.setY(actPowerForKick(player, power) * ServerParameters.kick_power_rate * Math.sin(Math.toRadians(angle)) + kkmax(kmax(power)));
+        double globalAngle = angle + player.getGlobalBodyAngle();
+        acceleration.setX(actPowerForKick(player, power) * ServerParameters.kick_power_rate * Math.cos(Math.toRadians(globalAngle)) + kkmax(kmax(power)));
+        acceleration.setY(actPowerForKick(player, power) * ServerParameters.kick_power_rate * Math.sin(Math.toRadians(globalAngle)) + kkmax(kmax(power)));
         if (MyMath.velocityModule(acceleration) > ServerParameters.ball_accel_max) {
             MyMath.normalizeVector(acceleration);
         }
