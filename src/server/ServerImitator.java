@@ -163,7 +163,7 @@ public class ServerImitator {
         acceleration.setX(actPowerForKick(player, power) * ServerParameters.kick_power_rate * Math.cos(Math.toRadians(globalAngle)) + kkmax(kmax(power)));
         acceleration.setY(actPowerForKick(player, power) * ServerParameters.kick_power_rate * Math.sin(Math.toRadians(globalAngle)) + kkmax(kmax(power)));
         if (MyMath.velocityModule(acceleration) > ServerParameters.ball_accel_max) {
-            MyMath.normalizeVector(acceleration);
+            MyMath.normalizeVectorToSomeLength(acceleration, ServerParameters.ball_accel_max);
         }
         return acceleration;
     }
@@ -182,7 +182,7 @@ public class ServerImitator {
             ball.getGlobalVelocity().setX(oldBallVelocity.getX() + acceleration.getX() + rrmax);
             ball.getGlobalVelocity().setY(oldBallVelocity.getY() + acceleration.getY() + rrmax);
             if (MyMath.velocityModule(ball.getGlobalVelocity()) > ServerParameters.ball_speed_max) {
-                MyMath.normalizeVector(ball.getGlobalVelocity());
+                MyMath.normalizeVectorToSomeLength(ball.getGlobalVelocity(), ServerParameters.ball_speed_max);
             }
         }
     }

@@ -57,6 +57,17 @@ public class MyMath {
         acceleration.setY(acceleration.getY()/velocityLength);
     }
 
+    /**
+     * Нормирование веткора к определенной длине
+     * @param acceleration ускорение, которое норминуется
+     * @param length максимальная длина веткора, к которой он нормируется
+     */
+    public static void normalizeVectorToSomeLength(Velocity acceleration, double length) {
+        normalizeVector(acceleration);
+        acceleration.setX(acceleration.getX()*length);
+        acceleration.setY(acceleration.getY()*length);
+    }
+
 
     /**
      * Проверка угла повората на принадлежность допустимому промежутку
