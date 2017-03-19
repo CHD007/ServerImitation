@@ -389,6 +389,8 @@ public class MainFrame extends JFrame {
                         manager.getAgentPlayer().setAction(action1);
                         manager.getServerImitator().simulationStep();
                         paintShapes();
+                        refreshBallInfo();
+                        refreshPlayerInfo();
                     }
                     break;
 
