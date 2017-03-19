@@ -545,7 +545,7 @@ public class Player extends MobileObject {
         double distanseBetweenPlayerAndPointForPass = Math.sqrt(Math.pow(Math.abs(x-posX), 2)
                 + Math.pow(Math.abs(y - posY), 2));
         // скорость мяча после удара, такая, что мяч достигне указанную точку за circles циклов
-        double velocityModule = (2*distanseBetweenPlayerAndPointForPass + ServerParameters.ball_decay*Math.pow(circles, 2))/(2*circles);
+        double velocityModule = (distanseBetweenPlayerAndPointForPass * (1 - ServerParameters.ball_decay)) / (1 - Math.pow(ServerParameters.ball_decay, circles));
         // угол между мячом и направлением поворота тела игрока
         FieldObject ball = new FieldObject(ballPosX, ballPosY);
         double angleBetweenTheBallAndPlayer = getAngleToPointRelativeToPlayer(ball);

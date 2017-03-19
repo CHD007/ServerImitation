@@ -71,36 +71,20 @@ public class ServerImitator {
             }
             //перемещение объектов
             changePosition(serverPlayer);
-            changePosition(ball);
             //замедление скорости
             speedDecay(serverPlayer, ServerParameters.player_decay);
-            speedDecay(ball, ServerParameters.ball_decay);
             //восстановление запаса сил
             staminaRecovery(serverPlayer);
             //посылка sense и see сообщения
             serverPlayer.getAgentPlayer().updateBodySense(sendSenseMessage(serverPlayer.getAgentPlayer()));
             System.out.println("serverImitator: ");
             serverPlayer.getAgentPlayer().updateSeeSense(sendSeeMessage(serverPlayer.getAgentPlayer()));
-            //проверка методов предсказания игроком позиции мяча
-       /* double pX = MyMath.unRelativeX(serverPlayer.getPosX(), serverPlayer.getPosY(),
-                serverPlayer.getAgentPlayer().predictedBallPosX(1), serverPlayer.getAgentPlayer().predictedBallPosY(1), serverPlayer.getGlobalBodyAngle());
-        double pY = MyMath.unRelativeY(serverPlayer.getPosX(), serverPlayer.getPosY(),
-                serverPlayer.getAgentPlayer().predictedBallPosX(1), serverPlayer.getAgentPlayer().predictedBallPosY(1), serverPlayer.getGlobalBodyAngle());
-
-        System.out.println("currentBallPosX = " + ball.getPosX());
-        System.out.println("currentBallPosY = " + ball.getPosY());
-        System.out.println("predictedBallPosX = " + pX);
-        System.out.println("predictedBallPosY = " + pY);*/
-        /*double predictedBallPosXrelative = serverPlayer.getAgentPlayer().predictedBallPosX(1);
-        double predictedBallPosYrelative = serverPlayer.getAgentPlayer().predictedBallPosY(1);
-        System.out.println("Old relative pos x = " + serverPlayer.getAgentPlayer().getOldBallPosX());
-        System.out.println("Old relative pos y = " + serverPlayer.getAgentPlayer().getOldBallPosY());
-        System.out.println("Current relative pos x = " + serverPlayer.getAgentPlayer().getBallPosX());
-        System.out.println("Current relative pos y = " + serverPlayer.getAgentPlayer().getBallPosY());
-        System.out.println("Predicted relative pos x = " + predictedBallPosXrelative);
-        System.out.println("Predicted relative pos y = " + predictedBallPosYrelative);*/
-            time++;
         }
+        //перемещение мяча
+        changePosition(ball);
+        //замедление скорости мяча
+        speedDecay(ball, ServerParameters.ball_decay);
+        time++;
     }
 
     /**

@@ -5,12 +5,12 @@ package server;
  */
 public class ServerParameters {
     public static final double player_decay = 0.4;
-    public static final double  ball_decay = 0.94;
+    public static final double ball_decay = 0.94;
 
-    public static final double  minpower = -100;
-    public static final double  maxpower = 100;
+    public static final double minpower = -100;
+    public static final double maxpower = 100;
 
-    public static final double  minmoment = -180;
+    public static final double minmoment = -180;
     public static final double maxmoment = 180;
 
     public static final double player_speed_max = 1.0;
