@@ -5,6 +5,9 @@ import server.SeeMessage;
 import server.SenseMessage;
 import server.ServerParameters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Danil on 27.02.2016.
  */
@@ -45,6 +48,7 @@ public class Player extends MobileObject {
     //глобальная скорость мяча
     private Velocity currentBallVelocity;
 
+    List<Player> oppositeTeamPlayers;
 
     public Player() {
         playerId = PLAYERS_NUMBER++;
@@ -56,6 +60,7 @@ public class Player extends MobileObject {
         currentBallVelocity = new Velocity();
         ballKicked = false;
         action = new Action();
+        oppositeTeamPlayers = new ArrayList<>();
     }
 
     public Player(Player player) {
@@ -224,7 +229,7 @@ public class Player extends MobileObject {
             positionBasedVelocityEstimation();
             System.out.println("updateSeeMessage() currentBallVelocityX = " + getCurrentBallVelocity().getX());
         }
-
+        oppositeTeamPlayers = seeMessage.getOppositeTeamPlayers();
     }
 
     /**

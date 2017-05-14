@@ -5,6 +5,7 @@ import objects.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Класс для имитации сервера RoboCup Soccer
@@ -390,6 +391,19 @@ public class ServerImitator {
     public SeeMessage sendSeeMessage(Player player) {
         SeeMessage seeMessage = new SeeMessage();
         Player serverPlayer = findPlayerById(player.getPlayerId());
+        List<Player> oppositeTeamPlayers = serverPlayers.stream()
+                .filter(p -> p.getCommand() == Command.OPPOSSITE)
+                .map(p -> {
+                    Player agentPlayer = new Player();
+                    agentPlayer.setCommand(p.getCommand());
+                    agentPlayer.setGlobalBodyAngle(p.getGlobalBodyAngle());
+                    agentPlayer.setPosX(p.getPosX());
+                    agentPlayer.setPosY(p.getPosY());
+                    agentPlayer.setGlobalVelocity(p.getGlobalVelocity());
+                    return agentPlayer;
+                })
+                .collect(Collectors.toList());
+        seeMessage.setOppositeTeamPlayers(oppositeTeamPlayers);
         seeMessage.setPlayerPosX(serverPlayer.getPosX());
         seeMessage.setPlayerPosY(serverPlayer.getPosY());
         seeMessage.setGlobalAngle(serverPlayer.getGlobalBodyAngle());

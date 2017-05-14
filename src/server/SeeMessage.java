@@ -1,5 +1,10 @@
 package server;
 
+import objects.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Danil on 26.03.2016.
  */
@@ -10,14 +15,25 @@ public class SeeMessage {
     private double globalAngle; // глобальный угол игрока
     protected double ballRelativeX; //x координата мяча в системе координат игрока
     protected double ballRelativeY; //y координата мяча в системе координат игрока
+    private List<Player> oppositeTeamPlayers;
 
-    public SeeMessage() {}
+    public SeeMessage() {
+        oppositeTeamPlayers = new ArrayList<>();
+    }
 
     public SeeMessage(double ballRelativeX, double ballRelativeY) {
         this.ballRelativeX = ballRelativeX;
         this.ballRelativeY = ballRelativeY;
     }
-
+    
+    public List<Player> getOppositeTeamPlayers() {
+        return oppositeTeamPlayers;
+    }
+    
+    public void setOppositeTeamPlayers(List<Player> oppositeTeamPlayers) {
+        this.oppositeTeamPlayers = oppositeTeamPlayers;
+    }
+    
     public double getBallRelativeX() {
         return ballRelativeX;
     }
