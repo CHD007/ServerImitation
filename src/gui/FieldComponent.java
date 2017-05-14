@@ -14,8 +14,8 @@ import java.util.*;
  * Created by Danil on 05.03.2016.
  */
 public class FieldComponent extends JPanel {
-    private static final int DEFAULT_WIDTH = 450;
-    private static final int DEFAULT_HEIGHT = 300;
+    private static final int DEFAULT_WIDTH = 525;
+    private static final int DEFAULT_HEIGHT = 340;
 
     private static final double scale = 5.0;
 
