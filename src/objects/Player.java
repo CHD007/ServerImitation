@@ -1,6 +1,5 @@
 package objects;
 
-import gui.MainFrame;
 import server.MyMath;
 import server.SeeMessage;
 import server.SenseMessage;
@@ -11,6 +10,7 @@ import server.ServerParameters;
  */
 public class Player extends MobileObject {
     private static int PLAYERS_NUMBER = 0;
+    private Command command;
     private int playerId;
 
     private double globalBodyAngle;
@@ -75,7 +75,15 @@ public class Player extends MobileObject {
 
         currentBallVelocity = new Velocity(player.getCurrentBallVelocity());
     }
-
+    
+    public Command getCommand() {
+        return command;
+    }
+    
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+    
     public Action getAction() {
         return action;
     }

@@ -1,6 +1,7 @@
 package gui;
 
 import objects.Ball;
+import objects.Command;
 import objects.Player;
 
 import javax.swing.*;
@@ -75,7 +76,11 @@ public class FieldComponent extends JPanel {
         for (Player player: players) {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             //градиет для игрока, чтобы определить, где лицо
-            GradientPaint blackToWhite = new GradientPaint(getPointP1(player), Color.black,
+            Color playerColor = Color.black;
+            if (player.getCommand() == Command.OPPOSSITE) {
+                playerColor = Color.red;
+            }
+            GradientPaint blackToWhite = new GradientPaint(getPointP1(player), playerColor,
                     getPointP2(player), Color.white);
             g2.setPaint(blackToWhite);
             g2.fill(getPlayerShape(player));

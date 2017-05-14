@@ -37,6 +37,7 @@ public class ServerImitator {
         if (agentPlayer.getPlayerId() == 1) {
             serverPlayer.setPosX(10);
         }
+        serverPlayer.setCommand(agentPlayer.getCommand());
         serverPlayer.setAgentPlayer(agentPlayer);
         serverPlayer.setEffort(ServerParameters.effort_max);
         serverPlayer.setRecovery(ServerParameters.recover_max);

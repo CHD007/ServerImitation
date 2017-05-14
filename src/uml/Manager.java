@@ -1,6 +1,6 @@
 package uml;
 
-import objects.Action;
+import objects.Command;
 import objects.Player;
 import server.ServerImitator;
 
@@ -18,9 +18,11 @@ public class Manager {
         serverImitator = new ServerImitator();
         playerList = new ArrayList<>();
         Player agentPlayer = new Player();
+        agentPlayer.setCommand(Command.OUR);
         agentPlayer.setGlobalBodyAngle(0);
         Player agentPlayer2 = new Player();
         agentPlayer2.setGlobalBodyAngle(0);
+        agentPlayer2.setCommand(Command.OPPOSSITE);
         playerList.add(agentPlayer);
         playerList.add(agentPlayer2);
 
