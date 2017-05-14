@@ -9,7 +9,8 @@ public enum ActionsEnum {
     PASS("Пас"),
     DRIBBLING("Ведение мяча"),
     MARK_OPPONENT("Опека оппонента"),
-    KEEP_TO_OFFSIDE("Держаться на уровне посл. защитника");
+    KEEP_TO_OFFSIDE("Держаться на уровне посл. защитника"),
+    NOTHING("Ничего не делать");
 
     private String description;
 

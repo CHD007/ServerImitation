@@ -58,13 +58,6 @@ public class Manager {
     }
 
     /**
-     * @return основной игрок для тестирования алгоритмов
-     */
-    public Player getAgentPlayer() {
-        return playerList.get(0);
-    }
-
-    /**
      * @return второй основной игрок для тестирования алгоритмов
      */
     public Player getAgentPlayer2() {

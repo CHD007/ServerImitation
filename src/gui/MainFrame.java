@@ -1,8 +1,8 @@
 package gui;
 
 import logs.Logs;
-import objects.*;
 import objects.Action;
+import objects.*;
 import server.MyMath;
 import server.ServerParameters;
 import uml.Manager;
@@ -297,8 +297,7 @@ public class MainFrame extends JFrame {
             Player player = (Player) playersComboBox.getSelectedItem();
             setPlayerInfo(manager.getServerImitator().findPlayerById(player.getPlayerId()));
             setBallInfo();
-            player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
-            player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
+            updatePlayersWordState();
             manager.getServerImitator().beforeHalf();
             paintShapes();
             if (manager.getServerImitator().isIntercept()) {
@@ -306,17 +305,26 @@ public class MainFrame extends JFrame {
             }
         }
     }
+    
+    /**
+     * Обновление информации о мире для каждого игрока
+     */
+    private void updatePlayersWordState() {
+        manager.getPlayerList().forEach(p -> {
+            p.updateSeeSense(manager.getServerImitator().sendSeeMessage(p));
+            p.updateBodySense(manager.getServerImitator().sendSenseMessage(p));
+        });
+    }
 
     public class BtnDashListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            Player player = manager.getAgentPlayer();
-            player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
-            player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
+            Player player = (Player) playersComboBox.getSelectedItem();
+            updatePlayersWordState();
             FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
-            manager.getAgentPlayer().setAction(player.dashToPoint(point));
-            System.out.println("dash: currentBallVelocity = " + manager.getAgentPlayer().getCurrentBallVelocity().getX());
-            System.out.println("dash: " + manager.getAgentPlayer().predictedBallPosX(10));
+            player.setAction(player.dashToPoint(point));
+            System.out.println("dash: currentBallVelocity = " + player.getCurrentBallVelocity().getX());
+            System.out.println("dash: " + player.predictedBallPosX(10));
             manager.getServerImitator().simulationStep();
             refreshPlayerInfo();
             refreshBallInfo();
@@ -330,11 +338,10 @@ public class MainFrame extends JFrame {
     public class BtnTurnListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            Player player = manager.getAgentPlayer();
-            player.updateBodySense(manager.getServerImitator().sendSenseMessage(player));
-            player.updateSeeSense(manager.getServerImitator().sendSeeMessage(player));
+            Player player = (Player) playersComboBox.getSelectedItem();
+            updatePlayersWordState();
             FieldObject point = new FieldObject(manager.getServerImitator().getBall().getPosX(), manager.getServerImitator().getBall().getPosY());
-            manager.getAgentPlayer().setAction(player.turnBodyToPoint(point));
+            player.setAction(player.turnBodyToPoint(point));
             manager.getServerImitator().simulationStep();
             refreshPlayerInfo();
             refreshBallInfo();
@@ -403,6 +410,10 @@ public class MainFrame extends JFrame {
                 case MARK_OPPONENT:
                     JOptionPane.showMessageDialog(null, "Mark opponent algorithm");
                     break;
+                    
+                case NOTHING:
+                    agentPlayer.setAction(null);
+                    break;
             }
         }
     }
@@ -411,12 +422,13 @@ public class MainFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             //проверка алгоритма перехвата
+            Player agentPlayer = (Player) playersComboBox.getSelectedItem();
             switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
                 case INTERSEPT:
                     Action action;
                     while (!manager.getServerImitator().isIntercept()) {
-                        action = manager.getAgentPlayer().intercept();
-                        manager.getAgentPlayer().setAction(action);
+                        action = agentPlayer.intercept();
+                        agentPlayer.setAction(action);
 //                        manager.getAgentPlayer2().setAction(manager.getAgentPlayer2().intercept());
                         if (action != null) {
                             manager.getServerImitator().simulationStep();
@@ -443,12 +455,12 @@ public class MainFrame extends JFrame {
                             Number pointX = (Number)textFieldPointForPassPosX.getValue();
                             Number pointY = (Number)textFieldPointForPassPosY.getValue();
                             Number circles = (Number)textFieldTactsNumber.getValue();
-                            manager.getAgentPlayer().setAction(manager.getAgentPlayer().pass(pointX.doubleValue(), pointY.doubleValue(), circles.intValue()));
+                            agentPlayer.setAction(agentPlayer.pass(pointX.doubleValue(), pointY.doubleValue(), circles.intValue()));
                             manager.getServerImitator().simulationStep();
                             paintShapes();
                         }
                         while (!manager.getServerImitator().getBall().isZeroVelocity()) {
-                            manager.getAgentPlayer().setAction(null);
+                            agentPlayer.setAction(null);
                             manager.getServerImitator().simulationStep();
                             paintShapes();
                             try {
@@ -465,7 +477,7 @@ public class MainFrame extends JFrame {
                     break;
                 
                 case KEEP_TO_OFFSIDE:
-                    manager.getAgentPlayer().getLastDefender();
+                    agentPlayer.getLastDefender();
                     break;
 
                 case MARK_OPPONENT:
