@@ -591,7 +591,7 @@ public class Player extends MobileObject {
     
     /**
      * Держаться на линии последнего защитника
-     * @return
+     * @return действие "бежать в точку" с координатами, которые игрок вычислил
      */
     public Action keepInLineWithLastDefender(AdditionalActionParameters actionParameter) {
         final int OFFSET = 10;
