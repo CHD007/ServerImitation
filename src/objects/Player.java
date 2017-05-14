@@ -4,6 +4,7 @@ import server.MyMath;
 import server.SeeMessage;
 import server.SenseMessage;
 import server.ServerParameters;
+import utils.AdditionalActionParameters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -592,9 +593,24 @@ public class Player extends MobileObject {
      * Держаться на линии последнего защитника
      * @return
      */
-    public Action keepInLineWithLastDefender() {
+    public Action keepInLineWithLastDefender(AdditionalActionParameters actionParameter) {
+        final int OFFSET = 10;
         Player lastDefender = getLastDefender();
-        return movToPos(lastDefender);
+        FieldObject posToMove = new FieldObject(lastDefender.getPosX(), lastDefender.getPosY());
+        switch (actionParameter) {
+            case LEFT:
+                posToMove.setPosY(posToMove.getPosY() - OFFSET);
+                break;
+                
+            case RIGHT:
+                posToMove.setPosY(posToMove.getPosY() + OFFSET);
+                break;
+                
+            case BACK:
+                posToMove.setPosX(posToMove.getPosX() - OFFSET);
+                break;
+        }
+        return movToPos(posToMove);
     }
 
     /**

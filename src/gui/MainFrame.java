@@ -7,6 +7,7 @@ import server.MyMath;
 import server.ServerParameters;
 import uml.Manager;
 import utils.ActionsEnum;
+import utils.AdditionalActionParameters;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -16,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
+import java.util.Arrays;
 
 /**
  * Created by Danil on 05.03.2016.
@@ -34,6 +36,7 @@ public class MainFrame extends JFrame {
     private JFormattedTextField textFieldBallAngle;
     private JComboBox<Player> playersComboBox;
     private JComboBox actionComboBox;
+    private JComboBox additionalparameters;
     private JCheckBox autoSimulationCheckBox;
     private JButton startButton;
     private JButton dashButton;
@@ -133,8 +136,10 @@ public class MainFrame extends JFrame {
         textFieldPointForPassPosY.setColumns(4);
         textFieldTactsNumber = new JFormattedTextField(NumberFormat.getNumberInstance());
         textFieldTactsNumber.setColumns(4);
+        additionalparameters = new JComboBox();
+        Arrays.stream(AdditionalActionParameters.values()).forEach(p -> additionalparameters.addItem(p));
         box1.add(initialDataBox("Параметры для выбранного действия", textFieldPointForPassPosX,
-                textFieldPointForPassPosY, textFieldTactsNumber));
+                textFieldPointForPassPosY, textFieldTactsNumber, additionalparameters));
         return box1;
     }
 
@@ -171,7 +176,7 @@ public class MainFrame extends JFrame {
      * @return
      */
     private Box initialDataBox(String objectName, JFormattedTextField x, JFormattedTextField y,
-                               JFormattedTextField tactsNumber) {
+                               JFormattedTextField tactsNumber, JComboBox additionalParameters) {
         Box objectInfoBox = Box.createHorizontalBox();
         TitledBorder title = BorderFactory.createTitledBorder(objectName);
         objectInfoBox.setBorder(title);
@@ -186,6 +191,11 @@ public class MainFrame extends JFrame {
         objectInfoBox.add(Box.createHorizontalStrut(10));
         objectInfoBox.add(new JLabel("Кол-во тактов: "));
         objectInfoBox.add(tactsNumber);
+        
+        objectInfoBox.add(Box.createHorizontalStrut(10));
+        objectInfoBox.add(new JLabel("Доп. параметры: "));
+        objectInfoBox.add(additionalParameters);
+        
         return objectInfoBox;
     }
 
@@ -404,7 +414,7 @@ public class MainFrame extends JFrame {
                     break;
                     
                 case KEEP_TO_OFFSIDE:
-                    agentPlayer.setAction(agentPlayer.keepInLineWithLastDefender());
+                    agentPlayer.setAction(agentPlayer.keepInLineWithLastDefender((AdditionalActionParameters) additionalparameters.getSelectedItem()));
                     manager.getServerImitator().simulationStep();
                     paintShapes();
                     refreshBallInfo();
