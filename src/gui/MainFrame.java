@@ -349,10 +349,12 @@ public class MainFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             //проверка алгоритма перехвата
+            Player agentPlayer = (Player) playersComboBox.getSelectedItem();
             switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
                 case INTERSEPT:
-                    Action action = manager.getAgentPlayer().intercept();
-                    manager.getAgentPlayer().setAction(action);
+//                    Action action = manager.getAgentPlayer().intercept();
+                    Action action = agentPlayer.intercept();
+                    agentPlayer.setAction(action);
                     if (action != null) {
                         manager.getServerImitator().simulationStep();
                     } else {
@@ -373,7 +375,7 @@ public class MainFrame extends JFrame {
                         Number pointX = (Number)textFieldPointForPassPosX.getValue();
                         Number pointY = (Number)textFieldPointForPassPosY.getValue();
                         Number circles = (Number)textFieldTactsNumber.getValue();
-                        manager.getAgentPlayer().setAction(manager.getAgentPlayer().pass(pointX.doubleValue(), pointY.doubleValue(), circles.intValue()));
+                        agentPlayer.setAction(agentPlayer.pass(pointX.doubleValue(), pointY.doubleValue(), circles.intValue()));
                         manager.getServerImitator().simulationStep();
                         paintShapes();
                         refreshBallInfo();
@@ -385,15 +387,19 @@ public class MainFrame extends JFrame {
                         Number pointX = (Number)textFieldPointForPassPosX.getValue();
                         Number pointY = (Number)textFieldPointForPassPosY.getValue();
                         Number circles = (Number)textFieldTactsNumber.getValue();
-                        Action action1 = manager.getAgentPlayer().dribbling(pointX.doubleValue(), pointY.doubleValue(), circles.intValue());
-                        manager.getAgentPlayer().setAction(action1);
+                        Action action1 = agentPlayer.dribbling(pointX.doubleValue(), pointY.doubleValue(), circles.intValue());
+                        agentPlayer.setAction(action1);
                         manager.getServerImitator().simulationStep();
                         paintShapes();
                         refreshBallInfo();
                         refreshPlayerInfo();
                     }
                     break;
-
+                    
+                case KEEP_TO_OFFSIDE:
+                    agentPlayer.getLastDefender();
+                    break;
+                    
                 case MARK_OPPONENT:
                     JOptionPane.showMessageDialog(null, "Mark opponent algorithm");
                     break;
@@ -456,6 +462,10 @@ public class MainFrame extends JFrame {
 
                 case DRIBBLING:
                     JOptionPane.showMessageDialog(null, "Dribbling algorithm");
+                    break;
+                
+                case KEEP_TO_OFFSIDE:
+                    manager.getAgentPlayer().getLastDefender();
                     break;
 
                 case MARK_OPPONENT:

@@ -1,13 +1,15 @@
 package utils;
 
 /**
- * Created by Danil on 12.03.2017.
+ * Действия, доступные игроку
+ * @author dchernyshov
  */
 public enum ActionsEnum {
     INTERSEPT("Перехват мяча"),
     PASS("Пас"),
     DRIBBLING("Ведение мяча"),
-    MARK_OPPONENT("Опека оппонента");
+    MARK_OPPONENT("Опека оппонента"),
+    KEEP_TO_OFFSIDE("Держаться на уровне посл. защитника");
 
     private String description;
 

@@ -578,6 +578,15 @@ public class Player extends MobileObject {
         action.setActionType("kick");
         return action;
     }
+    
+    /**
+     * Находит последнего защитника противоположной команды
+     * @return последний защитник
+     */
+    public Player getLastDefender() {
+        oppositeTeamPlayers.sort((p1, p2) -> -Double.valueOf(p1.getPosX()).compareTo(p2.getPosX()));
+        return oppositeTeamPlayers.get(0);
+    }
 
     /**
      * Проверяет, находится ли мяч в kickable area.

@@ -35,9 +35,9 @@ public class ServerImitator {
 
     public void connectToServer(Player agentPlayer) {
         ServerPlayer serverPlayer = new ServerPlayer();
-        if (agentPlayer.getPlayerId() == 1) {
-            serverPlayer.setPosX(10);
-        }
+        serverPlayer.setPosX(agentPlayer.getPosX());
+        serverPlayer.setPosY(agentPlayer.getPosY());
+        serverPlayer.setGlobalBodyAngle(agentPlayer.getGlobalBodyAngle());
         serverPlayer.setCommand(agentPlayer.getCommand());
         serverPlayer.setAgentPlayer(agentPlayer);
         serverPlayer.setEffort(ServerParameters.effort_max);

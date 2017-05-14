@@ -17,17 +17,32 @@ public class Manager {
     public Manager() {
         serverImitator = new ServerImitator();
         playerList = new ArrayList<>();
-        Player agentPlayer = new Player();
-        agentPlayer.setCommand(Command.OUR);
-        agentPlayer.setGlobalBodyAngle(0);
+        Player agentPlayer0 = new Player();
+        agentPlayer0.setCommand(Command.OUR);
+        agentPlayer0.setGlobalBodyAngle(0);
+        Player agentPlayer1 = new Player();
+        agentPlayer1.setCommand(Command.OUR);
+        agentPlayer1.setGlobalBodyAngle(0);
+        agentPlayer1.setPosX(10);
+        agentPlayer1.setPosY(10);
         Player agentPlayer2 = new Player();
-        agentPlayer2.setGlobalBodyAngle(0);
+        agentPlayer2.setGlobalBodyAngle(-180);
         agentPlayer2.setCommand(Command.OPPOSSITE);
-        playerList.add(agentPlayer);
+        agentPlayer2.setPosX(10);
+        Player agentPlayer3 = new Player();
+        agentPlayer3.setGlobalBodyAngle(-180);
+        agentPlayer3.setPosX(20);
+        agentPlayer3.setPosY(-10);
+        agentPlayer3.setCommand(Command.OPPOSSITE);
+        playerList.add(agentPlayer0);
+        playerList.add(agentPlayer1);
         playerList.add(agentPlayer2);
+        playerList.add(agentPlayer3);
 
-        serverImitator.connectToServer(agentPlayer);
+        serverImitator.connectToServer(agentPlayer0);
+        serverImitator.connectToServer(agentPlayer1);
         serverImitator.connectToServer(agentPlayer2);
+        serverImitator.connectToServer(agentPlayer3);
     }
 
     public ServerImitator getServerImitator() {
