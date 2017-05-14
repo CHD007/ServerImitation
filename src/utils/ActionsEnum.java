@@ -10,7 +10,8 @@ public enum ActionsEnum {
     DRIBBLING("Ведение мяча"),
     MARK_OPPONENT("Опека оппонента"),
     KEEP_TO_OFFSIDE("Держаться на уровне посл. защитника"),
-    NOTHING("Ничего не делать");
+    NOTHING("Ничего не делать"),
+    DASH("Бег в точку с заданными координатами");
 
     private String description;
 

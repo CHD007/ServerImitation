@@ -587,6 +587,15 @@ public class Player extends MobileObject {
         oppositeTeamPlayers.sort((p1, p2) -> -Double.valueOf(p1.getPosX()).compareTo(p2.getPosX()));
         return oppositeTeamPlayers.get(0);
     }
+    
+    /**
+     * Держаться на линии последнего защитника
+     * @return
+     */
+    public Action keepInLineWithLastDefender() {
+        Player lastDefender = getLastDefender();
+        return movToPos(lastDefender);
+    }
 
     /**
      * Проверяет, находится ли мяч в kickable area.

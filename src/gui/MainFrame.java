@@ -404,7 +404,23 @@ public class MainFrame extends JFrame {
                     break;
                     
                 case KEEP_TO_OFFSIDE:
-                    agentPlayer.getLastDefender();
+                    agentPlayer.setAction(agentPlayer.keepInLineWithLastDefender());
+                    manager.getServerImitator().simulationStep();
+                    paintShapes();
+                    refreshBallInfo();
+                    refreshPlayerInfo();
+                    break;
+                    
+                case DASH:
+                    if (validateInitialDataBox()) {
+                        Number pointX = (Number)textFieldPointForPassPosX.getValue();
+                        Number pointY = (Number)textFieldPointForPassPosY.getValue();
+                        agentPlayer.setAction(agentPlayer.movToPos(new FieldObject(pointX.doubleValue(), pointY.doubleValue())));
+                        manager.getServerImitator().simulationStep();
+                        paintShapes();
+                        refreshBallInfo();
+                        refreshPlayerInfo();
+                    }
                     break;
                     
                 case MARK_OPPONENT:
@@ -415,6 +431,7 @@ public class MainFrame extends JFrame {
                     agentPlayer.setAction(null);
                     break;
             }
+            updatePlayersWordState();
         }
     }
 
