@@ -70,6 +70,8 @@ public class ServerImitator {
             Action action = serverPlayer.getAgentPlayer().getAction();
             if (action != null && action.getActionType() != null) {
                 System.out.println("simulationStep() action = " + action.getActionType());
+                System.out.println("simulationStep() action param = " +
+                        ("turn".equals(action.getActionType()) ? action.getMoment() : action.getPower()));
                 action(serverPlayer, action);
             }
             //перемещение объектов
@@ -381,8 +383,9 @@ public class ServerImitator {
         return false;
     }
 
-    public SenseMessage sendSenseMessage(Player serverPlayer) {
+    public SenseMessage sendSenseMessage(Player agentPlayer) {
         SenseMessage senseMessage = new SenseMessage();
+        Player serverPlayer = findPlayerById(agentPlayer.getPlayerId());
         senseMessage.setVelocity(serverPlayer.getGlobalVelocity());
         senseMessage.setEffort(serverPlayer.getEffort());
         senseMessage.setStamina(serverPlayer.getStamina());

@@ -350,23 +350,14 @@ public class MainFrame extends JFrame {
     public class BtnStepListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            //проверка алгоритма перехвата
             Player agentPlayer = (Player) playersComboBox.getSelectedItem();
             switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
                 case INTERSEPT:
 //                    Action action = manager.getAgentPlayer().intercept();
                     Action action = agentPlayer.intercept();
                     agentPlayer.setAction(action);
-                    if (action != null) {
-                        manager.getServerImitator().simulationStep();
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
-                    }
-                    refreshPlayerInfo();
-                    refreshBallInfo();
 
                     logs.writeLog(manager.getServerImitator().getServerPlayers().get(0), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
-                    paintShapes();
                     if (manager.getServerImitator().isIntercept()) {
                         JOptionPane.showMessageDialog(null, "Ball is intercepted");
                     }
@@ -378,9 +369,6 @@ public class MainFrame extends JFrame {
                         Number pointY = (Number)textFieldPointForPassPosY.getValue();
                         Number circles = (Number)textFieldTactsNumber.getValue();
                         agentPlayer.setAction(agentPlayer.pass(pointX.doubleValue(), pointY.doubleValue(), circles.intValue()));
-                        manager.getServerImitator().simulationStep();
-                        paintShapes();
-                        refreshBallInfo();
                     }
                     break;
 
@@ -391,41 +379,33 @@ public class MainFrame extends JFrame {
                         Number circles = (Number)textFieldTactsNumber.getValue();
                         Action action1 = agentPlayer.dribbling(pointX.doubleValue(), pointY.doubleValue(), circles.intValue());
                         agentPlayer.setAction(action1);
-                        manager.getServerImitator().simulationStep();
-                        paintShapes();
-                        refreshBallInfo();
-                        refreshPlayerInfo();
                     }
                     break;
-                    
+
                 case KEEP_TO_OFFSIDE:
                     agentPlayer.setAction(agentPlayer.keepInLineWithLastDefender((AdditionalActionParameters) additionalparameters.getSelectedItem()));
-                    manager.getServerImitator().simulationStep();
-                    paintShapes();
-                    refreshBallInfo();
-                    refreshPlayerInfo();
                     break;
-                    
+
                 case DASH:
                     if (validateInitialDataBox()) {
                         Number pointX = (Number)textFieldPointForPassPosX.getValue();
                         Number pointY = (Number)textFieldPointForPassPosY.getValue();
                         agentPlayer.setAction(agentPlayer.movToPos(new FieldObject(pointX.doubleValue(), pointY.doubleValue())));
-                        manager.getServerImitator().simulationStep();
-                        paintShapes();
-                        refreshBallInfo();
-                        refreshPlayerInfo();
                     }
                     break;
-                    
+
                 case MARK_OPPONENT:
                     JOptionPane.showMessageDialog(null, "Mark opponent algorithm");
                     break;
-                    
+
                 case NOTHING:
                     agentPlayer.setAction(null);
                     break;
             }
+            manager.getServerImitator().simulationStep();
+            paintShapes();
+            refreshBallInfo();
+            refreshPlayerInfo();
             updatePlayersWordState();
         }
     }
