@@ -45,6 +45,12 @@ public class ServerImitator {
         serverPlayer.setRecovery(ServerParameters.recover_max);
         serverPlayer.setStamina(ServerParameters.stamina_max);
         serverPlayers.add(serverPlayer);
+        if (agentPlayer.getCommand() == Command.OPPOSSITE) {
+            serverPlayers.stream()
+                    .map(ServerPlayer::getAgentPlayer)
+                    .filter(p -> p.getCommand() == Command.OUR)
+                    .forEach(p -> p.addOppositeTeamPlayer(serverPlayer));
+        }
     }
 
     /**
@@ -395,19 +401,19 @@ public class ServerImitator {
     public SeeMessage sendSeeMessage(Player player) {
         SeeMessage seeMessage = new SeeMessage();
         Player serverPlayer = findPlayerById(player.getPlayerId());
-        List<Player> oppositeTeamPlayers = serverPlayers.stream()
-                .filter(p -> p.getCommand() == Command.OPPOSSITE)
-                .map(p -> {
-                    Player agentPlayer = new Player();
-                    agentPlayer.setCommand(p.getCommand());
-                    agentPlayer.setGlobalBodyAngle(p.getGlobalBodyAngle());
-                    agentPlayer.setPosX(p.getPosX());
-                    agentPlayer.setPosY(p.getPosY());
-                    agentPlayer.setGlobalVelocity(p.getGlobalVelocity());
-                    return agentPlayer;
-                })
-                .collect(Collectors.toList());
-        seeMessage.setOppositeTeamPlayers(oppositeTeamPlayers);
+//        List<Player> oppositeTeamPlayers = serverPlayers.stream()
+//                .filter(p -> p.getCommand() == Command.OPPOSSITE)
+//                .map(p -> {
+//                    Player agentPlayer = new Player();
+//                    agentPlayer.setCommand(p.getCommand());
+//                    agentPlayer.setGlobalBodyAngle(p.getGlobalBodyAngle());
+//                    agentPlayer.setPosX(p.getPosX());
+//                    agentPlayer.setPosY(p.getPosY());
+//                    agentPlayer.setGlobalVelocity(p.getGlobalVelocity());
+//                    return agentPlayer;
+//                })
+//                .collect(Collectors.toList());
+//        seeMessage.setOppositeTeamPlayers(oppositeTeamPlayers);
         seeMessage.setPlayerPosX(serverPlayer.getPosX());
         seeMessage.setPlayerPosY(serverPlayer.getPosY());
         seeMessage.setGlobalAngle(serverPlayer.getGlobalBodyAngle());

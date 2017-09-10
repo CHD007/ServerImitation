@@ -347,10 +347,29 @@ public class MainFrame extends JFrame {
         }
     }
 
+    private void updateActionForAllPlayersExceptGivenPlayer(Player agentPlayer) {
+        manager.getPlayerList().stream()
+                .filter(p -> p.getAction() != null)
+                .filter(p -> {
+                    if (agentPlayer == null) {
+                        return true;
+                    }
+                    return p.getPlayerId() != agentPlayer.getPlayerId();
+                })
+                .forEach(Player::updateAction);
+    }
+
     public class BtnStepListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             Player agentPlayer = (Player) playersComboBox.getSelectedItem();
+
+            updateActionForAllPlayersExceptGivenPlayer(agentPlayer);
+            
+            if (agentPlayer != null) {
+                agentPlayer.setGlobalActionType((ActionsEnum) actionComboBox.getSelectedItem());
+            }
+
             switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
                 case INTERSEPT:
 //                    Action action = manager.getAgentPlayer().intercept();

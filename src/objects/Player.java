@@ -4,6 +4,7 @@ import server.MyMath;
 import server.SeeMessage;
 import server.SenseMessage;
 import server.ServerParameters;
+import utils.ActionsEnum;
 import utils.AdditionalActionParameters;
 
 import java.util.ArrayList;
@@ -46,6 +47,9 @@ public class Player extends MobileObject {
 
     private boolean ballKicked;
 
+    private ActionsEnum globalActionType = ActionsEnum.NOTHING;
+    private AdditionalActionParameters actionParameter;
+
     //глобальная скорость мяча
     private Velocity currentBallVelocity;
 
@@ -81,6 +85,10 @@ public class Player extends MobileObject {
 
         currentBallVelocity = new Velocity(player.getCurrentBallVelocity());
     }
+
+    public void addOppositeTeamPlayer(Player player) {
+        oppositeTeamPlayers.add(player);
+    }
     
     public Command getCommand() {
         return command;
@@ -96,6 +104,14 @@ public class Player extends MobileObject {
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public ActionsEnum getGlobalActionType() {
+        return globalActionType;
+    }
+
+    public void setGlobalActionType(ActionsEnum globalActionType) {
+        this.globalActionType = globalActionType;
     }
 
     public int getPlayerId() {
@@ -174,6 +190,25 @@ public class Player extends MobileObject {
     }
 
     /**
+     * Обновление действия игрока, которое он хочет выполнить в следующем цикле
+     * в зависимости от поставленной ему задачи {@link Player#globalActionType}
+     */
+    public void updateAction() {
+        switch (globalActionType) {
+            case INTERSEPT:
+                setAction(intercept());
+                break;
+
+            case KEEP_TO_OFFSIDE:
+                setAction(keepInLineWithLastDefender(actionParameter));
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /**
      * @param a желаемый угол поворота
      * @return величина угла, которая должна быть передана команде turn для поворота на желаемый угол a
      */
@@ -234,7 +269,6 @@ public class Player extends MobileObject {
             positionBasedVelocityEstimation();
             System.out.println("updateSeeMessage() currentBallVelocityX = " + getCurrentBallVelocity().getX());
         }
-        oppositeTeamPlayers = seeMessage.getOppositeTeamPlayers();
     }
 
     /**
@@ -599,6 +633,7 @@ public class Player extends MobileObject {
      */
     public Action keepInLineWithLastDefender(AdditionalActionParameters actionParameter) {
         final int OFFSET = 10;
+        this.actionParameter = actionParameter;
         Player lastDefender = getLastDefender();
         FieldObject posToMove = new FieldObject(lastDefender.getPosX(), lastDefender.getPosY());
         switch (actionParameter) {

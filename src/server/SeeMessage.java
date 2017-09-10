@@ -15,23 +15,14 @@ public class SeeMessage {
     private double globalAngle; // глобальный угол игрока
     protected double ballRelativeX; //x координата мяча в системе координат игрока
     protected double ballRelativeY; //y координата мяча в системе координат игрока
-    private List<Player> oppositeTeamPlayers;
 
     public SeeMessage() {
-        oppositeTeamPlayers = new ArrayList<>();
+
     }
 
     public SeeMessage(double ballRelativeX, double ballRelativeY) {
         this.ballRelativeX = ballRelativeX;
         this.ballRelativeY = ballRelativeY;
-    }
-    
-    public List<Player> getOppositeTeamPlayers() {
-        return oppositeTeamPlayers;
-    }
-    
-    public void setOppositeTeamPlayers(List<Player> oppositeTeamPlayers) {
-        this.oppositeTeamPlayers = oppositeTeamPlayers;
     }
     
     public double getBallRelativeX() {
