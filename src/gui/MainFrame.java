@@ -220,11 +220,8 @@ public class MainFrame extends JFrame {
     }
 
     private void initializePlayersComboBox() {
-        playersComboBox = new JComboBox<Player>();
-        for (Player player: manager.getPlayerList()) {
-            playersComboBox.addItem(player);
-        }
-
+        playersComboBox = new JComboBox<>();
+        manager.getPlayerList().forEach(p -> playersComboBox.addItem(p));
         playersComboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -242,12 +239,8 @@ public class MainFrame extends JFrame {
 
         autoSimulationCheckBox = new JCheckBox("Выполнение по шагам");
         autoSimulationCheckBox.setSelected(false);
-        autoSimulationCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                stepButton.setEnabled(autoSimulationCheckBox.isSelected());
-            }
-        });
+        autoSimulationCheckBox.addActionListener((ActionEvent e) ->
+                stepButton.setEnabled(autoSimulationCheckBox.isSelected()));
         box.add(autoSimulationCheckBox);
         box.add(Box.createHorizontalStrut(10));
 
