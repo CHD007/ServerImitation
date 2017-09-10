@@ -102,6 +102,10 @@ public class Player extends MobileObject {
         return playerId;
     }
 
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
     public void turn(double angle) {
         action.setActionType("turn");
         action.setMoment(angle);

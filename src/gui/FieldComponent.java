@@ -88,6 +88,7 @@ public class FieldComponent extends JPanel {
             g2.setStroke(new BasicStroke(1f));
             g2.setColor(Color.black);
             g2.draw(getPlayerShape(player));
+            g2.drawString(Integer.toString(player.getPlayerId()), (float) getPlayerShapePosX(player), (float) getPlayerShapePosY(player));
         }
         //рисование мяча
         g2.setColor(Color.black);

@@ -35,6 +35,7 @@ public class ServerImitator {
 
     public void connectToServer(Player agentPlayer) {
         ServerPlayer serverPlayer = new ServerPlayer();
+        serverPlayer.setPlayerId(agentPlayer.getPlayerId());
         serverPlayer.setPosX(agentPlayer.getPosX());
         serverPlayer.setPosY(agentPlayer.getPosY());
         serverPlayer.setGlobalBodyAngle(agentPlayer.getGlobalBodyAngle());

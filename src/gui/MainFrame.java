@@ -216,15 +216,7 @@ public class MainFrame extends JFrame {
 
     private void initializeActionComboBox() {
         actionComboBox = new JComboBox();
-        for (ActionsEnum actionsEnum: ActionsEnum.values()) {
-            actionComboBox.addItem(actionsEnum);
-        }
-        actionComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
+        Arrays.stream(ActionsEnum.values()).forEach(actionsEnum -> actionComboBox.addItem(actionsEnum));
     }
 
     private void initializePlayersComboBox() {
