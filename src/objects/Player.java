@@ -9,6 +9,7 @@ import utils.AdditionalActionParameters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Danil on 27.02.2016.
@@ -650,6 +651,65 @@ public class Player extends MobileObject {
                 break;
         }
         return movToPos(posToMove);
+    }
+
+    /**
+     * Блокировка игрока от паса
+     * @param opponentToBlock fieldObject с глобальными координатами, описывающий оппонента, которого нужно заблокировать
+     * @return бег в точку для блокирования
+     */
+    public Action blockOpponent(FieldObject opponentToBlock) {
+        /*
+         * Вычислим стороны треугольника, образованного тремя объектами:
+         *  A) игрок, владеющий мячом
+         *  B) наш игрок, который будет блокировать
+         *  С) игрок, которого нужно блокировать
+         */
+        Optional<FieldObject> playerWithBallOptional = getPlayerWithBall();
+        FieldObject playerWithBall;
+        if (playerWithBallOptional.isPresent()) {
+            playerWithBall = playerWithBallOptional.get();
+        } else {
+            playerWithBall = new FieldObject(ballGlobalPosX, ballGlobalPosY);
+        }
+        double distanceBetweenOppositePlayers = MyMath.distance(opponentToBlock, playerWithBall);
+        double distanceBetweenThisPlyaerAndPlayerToBlock = MyMath.distance(opponentToBlock, this);
+        double distanceBetweenThisPlayerAndPlayerWithBall = MyMath.distance(playerWithBall, this);
+
+        /*
+         * Вычисление координат точки для бега
+         */
+        double angleBCS = Math.acos((Math.pow(distanceBetweenThisPlyaerAndPlayerToBlock, 2) +
+                Math.pow(distanceBetweenOppositePlayers, 2) - Math.pow(distanceBetweenThisPlayerAndPlayerWithBall, 2))
+                /(2 * distanceBetweenThisPlyaerAndPlayerToBlock * distanceBetweenOppositePlayers));
+        double CS = distanceBetweenThisPlyaerAndPlayerToBlock * Math.cos(angleBCS);
+        double angleHCS = Math.acos(Math.abs((playerWithBall.getPosX() - opponentToBlock.getPosX()))/distanceBetweenOppositePlayers);
+        double xDifference = CS * Math.cos(angleHCS);
+        double yDifference = CS * Math.sin(angleHCS);
+
+        FieldObject distination = new FieldObject();
+        if (opponentToBlock.getPosX() >= playerWithBall.getPosX()) {
+            distination.setPosX(opponentToBlock.getPosX() - xDifference);
+        } else {
+            distination.setPosX(opponentToBlock.getPosX() + xDifference);
+        }
+        if (opponentToBlock.getPosY() >= playerWithBall.getPosY()) {
+            distination.setPosY(opponentToBlock.getPosY() - yDifference);
+        } else {
+            distination.setPosY(opponentToBlock.getPosY() + yDifference);
+        }
+        return movToPos(distination);
+    }
+
+    public Optional<FieldObject> getPlayerWithBall() {
+        return oppositeTeamPlayers.stream()
+                .filter(player -> (player.getPosX() >= ballGlobalPosX + ServerParameters.kickable_margin
+                        || player.getPosX() >= ballGlobalPosX - ServerParameters.kickable_margin)
+                        && (player.getPosY() >= ballGlobalPosY + ServerParameters.kickable_margin
+                        || player.getPosY() >= ballGlobalPosY - ServerParameters.kickable_margin))
+                .map(player -> (FieldObject) player)
+                .findFirst();
+
     }
 
     /**

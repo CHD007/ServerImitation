@@ -414,7 +414,13 @@ public class MainFrame extends JFrame {
                     break;
 
                 case MARK_OPPONENT:
-                    JOptionPane.showMessageDialog(null, "Mark opponent algorithm");
+                    if (validateInitialDataBox()) {
+                        Number pointX = (Number)textFieldPointForPassPosX.getValue();
+                        Number pointY = (Number)textFieldPointForPassPosY.getValue();
+                        FieldObject opponentToBlock = new FieldObject(pointX.doubleValue(), pointY.doubleValue());
+                        Action blockOpponent = agentPlayer.blockOpponent(opponentToBlock);
+                        agentPlayer.setAction(blockOpponent);
+                    }
                     break;
 
                 case NOTHING:
