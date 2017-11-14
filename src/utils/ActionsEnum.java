@@ -1,7 +1,9 @@
 package utils;
 
 /**
- * Действия, доступные игроку
+ * Действия, доступные игроку.
+ * Это те действия, которые будут приходить от подсистемы планирования.
+ *
  * @author dchernyshov
  */
 public enum ActionsEnum {
@@ -11,7 +13,8 @@ public enum ActionsEnum {
     MARK_OPPONENT("Опека оппонента"),
     KEEP_TO_OFFSIDE("Держаться на уровне посл. защитника"),
     NOTHING("Ничего не делать"),
-    DASH("Бег в точку с заданными координатами");
+    DASH("Бег в точку с заданными координатами"),
+    OUTPLAYING("Открыться под пас");
 
     private String description;
 

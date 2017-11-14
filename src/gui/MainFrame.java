@@ -426,6 +426,14 @@ public class MainFrame extends JFrame {
                 case NOTHING:
                     agentPlayer.setAction(null);
                     break;
+
+                case OUTPLAYING:
+                    if (validateInitialDataBox()) {
+                        Action outplayingAction = agentPlayer.outplayingOpponent(manager.getPlayerList().get(2),
+                                (AdditionalActionParameters) additionalparameters.getSelectedItem());
+                        agentPlayer.setAction(outplayingAction);
+                    }
+                    break;
             }
             manager.getServerImitator().simulationStep();
             paintShapes();

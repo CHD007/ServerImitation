@@ -2,6 +2,7 @@ package utils;
 
 /**
  * Дополнительные параметры для действия
+ *
  * @author dchernyshov
  */
 public enum AdditionalActionParameters {

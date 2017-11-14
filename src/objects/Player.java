@@ -7,6 +7,7 @@ import server.ServerParameters;
 import utils.ActionsEnum;
 import utils.AdditionalActionParameters;
 
+import javax.tools.FileObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -710,6 +711,41 @@ public class Player extends MobileObject {
                 .map(player -> (FieldObject) player)
                 .findFirst();
 
+    }
+
+    /**
+     * Алгоритм открытия под пас.
+     * В данном действии доступно три тактики октрытия под пас:
+     * 1) смещение по фронту аттаки в центр с дальнейшим смещение к вражеским воротам;
+     * 2) смещение по флангу в глубь с целью получить пас вразрез;
+     * 3) оттянуться назад к своим воротам.
+     *
+     * @param opponentToOutplaying игрок, от которого нужно оторваться
+     * @param actionParameter дополнительный параметр действия, определяющий одну из тактик, описынных выше
+     * @return действие (turn | dash), которое нужно выполинть в следующем цикле
+     */
+    public Action outplayingOpponent(MobileObject opponentToOutplaying, AdditionalActionParameters actionParameter) {
+        double smallDeltaToBeSure = 1;
+        double posY;
+        double posX;
+        FieldObject positionToMov;
+
+        switch (actionParameter) {
+            case LEFT:
+                posY = opponentToOutplaying.getPosY() - ServerParameters.player_size - smallDeltaToBeSure;
+                posX = opponentToOutplaying.getPosX() - smallDeltaToBeSure;
+                positionToMov = new FieldObject(posX, posY);
+                return movToPos(positionToMov);
+
+            case RIGHT:
+                posY = opponentToOutplaying.getPosY() + ServerParameters.player_size + smallDeltaToBeSure;
+                posX = opponentToOutplaying.getPosX() - smallDeltaToBeSure;
+                positionToMov = new FieldObject(posX, posY);
+                return movToPos(positionToMov);
+
+            default:
+                return null;
+        }
     }
 
     /**
