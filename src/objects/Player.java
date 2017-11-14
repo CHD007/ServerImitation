@@ -758,11 +758,12 @@ public class Player extends MobileObject {
                 return movToPos(positionToMov);
 
             case BACK:
+                double distanceToGoBack = 5;
                 posY = this.getPosY();
                 if (getOurFieldPart().equals(FieldPart.LEFT)) {
-                    posX = this.getPosX() - 5;
+                    posX = this.getPosX() - distanceToGoBack;
                 } else {
-                    posX = this.getPosX() + 5;
+                    posX = this.getPosX() + distanceToGoBack;
                 }
                 return movToPos(new FieldObject(posX, posY));
 
