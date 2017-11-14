@@ -56,6 +56,7 @@ public class Player extends MobileObject {
     private Velocity currentBallVelocity;
 
     List<Player> oppositeTeamPlayers;
+    private FieldPart ourFieldPart;
 
     public Player() {
         playerId = PLAYERS_NUMBER++;
@@ -88,6 +89,14 @@ public class Player extends MobileObject {
         currentBallVelocity = new Velocity(player.getCurrentBallVelocity());
     }
 
+    public FieldPart getOurFieldPart() {
+        return ourFieldPart;
+    }
+
+    public void setOurFieldPart(FieldPart ourFieldPart) {
+        this.ourFieldPart = ourFieldPart;
+    }
+
     public void addOppositeTeamPlayer(Player player) {
         oppositeTeamPlayers.add(player);
     }
@@ -98,6 +107,11 @@ public class Player extends MobileObject {
     
     public void setCommand(Command command) {
         this.command = command;
+        if (command.equals(Command.OUR)) {
+            this.ourFieldPart = FieldPart.LEFT;
+        } else {
+            this.ourFieldPart = FieldPart.RIGHT;
+        }
     }
     
     public Action getAction() {
@@ -742,6 +756,15 @@ public class Player extends MobileObject {
                 posX = opponentToOutplaying.getPosX() - smallDeltaToBeSure;
                 positionToMov = new FieldObject(posX, posY);
                 return movToPos(positionToMov);
+
+            case BACK:
+                posY = this.getPosY();
+                if (getOurFieldPart().equals(FieldPart.LEFT)) {
+                    posX = this.getPosX() - 5;
+                } else {
+                    posX = this.getPosX() + 5;
+                }
+                return movToPos(new FieldObject(posX, posY));
 
             default:
                 return null;

@@ -37,4 +37,29 @@ public class Action {
     public void setMoment(double moment) {
         this.moment = moment;
     }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = result * 31 + (actionType == null ? 0 : actionType.hashCode());
+        result = result * 31 + new Double(power).intValue();
+        result = result * 31 + new Double(moment).intValue();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Action)) {
+            return false;
+        }
+
+        Action otherAction = (Action) obj;
+
+        return (actionType == null ? otherAction.getActionType() == null : actionType.equals(otherAction.getActionType()))
+                && (power == otherAction.power)
+                && (moment == otherAction.moment);
+    }
 }
