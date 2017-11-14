@@ -29,6 +29,8 @@ public class ServerImitator {
 
     public ServerImitator() {
         ball = new Ball();
+        ball.setPosX(5);
+        ball.setPosY(-15);
         serverPlayers = new ArrayList<>();
         beforeHalf();
     }

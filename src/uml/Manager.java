@@ -20,6 +20,8 @@ public class Manager {
         Player agentPlayer0 = new Player();
         agentPlayer0.setCommand(Command.OUR);
         agentPlayer0.setGlobalBodyAngle(0);
+        agentPlayer0.setPosX(5);
+        agentPlayer0.setPosY(-15);
         Player agentPlayer1 = new Player();
         agentPlayer1.setCommand(Command.OUR);
         agentPlayer1.setGlobalBodyAngle(0);
@@ -28,11 +30,12 @@ public class Manager {
         Player agentPlayer2 = new Player();
         agentPlayer2.setGlobalBodyAngle(-180);
         agentPlayer2.setCommand(Command.OPPOSSITE);
-        agentPlayer2.setPosX(10);
+        agentPlayer2.setPosX(30);
+        agentPlayer2.setPosY(10);
         Player agentPlayer3 = new Player();
         agentPlayer3.setGlobalBodyAngle(-180);
         agentPlayer3.setPosX(20);
-        agentPlayer3.setPosY(-10);
+        agentPlayer3.setPosY(-20);
         agentPlayer3.setCommand(Command.OPPOSSITE);
         playerList.add(agentPlayer0);
         playerList.add(agentPlayer1);
