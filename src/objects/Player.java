@@ -7,7 +7,6 @@ import server.ServerParameters;
 import utils.ActionsEnum;
 import utils.AdditionalActionParameters;
 
-import javax.tools.FileObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -292,7 +291,7 @@ public class Player extends MobileObject {
      * @param point глобальные координаты точки
      * @return относительный угол
      */
-    public double getAngleToPointRelativeToPlayer(FieldObject point) {
+    public double getRelativeAngleToGlobalPoint(FieldObject point) {
         double predictedX = getPosX() + getGlobalVelocity().getX();
         double predictedY = getPosY() + getGlobalVelocity().getY();
         double relativeX = MyMath.relativeX(predictedX, predictedY, point.getPosX(), point.getPosY(), getGlobalBodyAngle());
@@ -301,12 +300,21 @@ public class Player extends MobileObject {
     }
 
     /**
+     * Вычисление угла до точки относительно игрока
+     * @param point координаты точки относительно игрока
+     * @return относительный угол
+     */
+    public double getRelativeAngleToRelativePoint(FieldObject point) {
+        return MyMath.polarAngle(point.getPosX(), point.getPosY());
+    }
+
+    /**
      * Поворот тела к точке с глобальными координатами (x,y)
      * @param point точки куда нужно повернуться с глобальными координатами
      * @return действие, которое нужно совершить, чтобы повернуться к точке с координатми (x,y)
      */
     public Action turnBodyToPoint(FieldObject point) {
-        double angle = getAngleForTurn(getAngleToPointRelativeToPlayer(point));
+        double angle = getAngleForTurn(getRelativeAngleToGlobalPoint(point));
         Action action = new Action();
         action.setActionType("turn");
         action.setMoment(angle);
@@ -379,7 +387,7 @@ public class Player extends MobileObject {
 
     public int predictNrCyclesToPoint(FieldObject point) {
         int n = (int)((MyMath.distance(this, point)/ServerParameters.player_speed_max)
-                + Math.abs((getAngleToPointRelativeToPlayer(point))/turnCorrection));
+                + Math.abs((getRelativeAngleToGlobalPoint(point))/turnCorrection));
         return n;
     }
 
@@ -562,7 +570,7 @@ public class Player extends MobileObject {
      * @return одна из команд последовательности команд, необходимых для достижения заданной точки
      */
     public Action movToPos(FieldObject point) {
-        double angle = getAngleToPointRelativeToPlayer(point);
+        double angle = getRelativeAngleToGlobalPoint(point);
         double dist = MyMath.distance(this, point);
         if ((Math.abs(angle) < interceptTurnAngle) ||
                 (Math.abs(MyMath.normalizeAngle(angle + interceptTurnAngle)) < interceptTurnAngle & dist < interceptDistanceBack)) {
@@ -615,8 +623,8 @@ public class Player extends MobileObject {
         // скорость мяча после удара, такая, что мяч достигне указанную точку за circles циклов
         double velocityModule = (distanseBetweenPlayerAndPointForPass * (1 - ServerParameters.ball_decay)) / (1 - Math.pow(ServerParameters.ball_decay, circles));
         // угол между мячом и направлением поворота тела игрока
-        FieldObject ball = new FieldObject(ballPosX, ballPosY);
-        double angleBetweenTheBallAndPlayer = getAngleToPointRelativeToPlayer(ball);
+        FieldObject ball = new FieldObject(ballGlobalPosX, ballGlobalPosY);
+        double angleBetweenTheBallAndPlayer = getRelativeAngleToGlobalPoint(ball);
         double distanceBetwennPlayerAndBall = MyMath.distance(this, ball);
         // действительная сила удара
         double actPower = ServerParameters.kick_power_rate * (1 - 0.25*angleBetweenTheBallAndPlayer/180

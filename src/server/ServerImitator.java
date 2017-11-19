@@ -5,7 +5,6 @@ import objects.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * Класс для имитации сервера RoboCup Soccer
@@ -141,7 +140,7 @@ public class ServerImitator {
      */
     private double actPowerForKick(Player player, double power) {
         // угол между мячом и направлением поворота тела игрока
-        double angleBetweenTheBallAndPlayer = player.getAngleToPointRelativeToPlayer(ball);
+        double angleBetweenTheBallAndPlayer = player.getRelativeAngleToGlobalPoint(ball);
         // расстояние между мячом и игроком
         double distanceBetweenTheBallAndPlayer = MyMath.distance(player, ball);
         return power * (1 - 0.25*(angleBetweenTheBallAndPlayer/180) - 0.25*(distanceBetweenTheBallAndPlayer/ServerParameters.kickable_margin));
