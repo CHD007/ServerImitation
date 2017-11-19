@@ -1,6 +1,7 @@
 package server;
 
 import objects.FieldObject;
+import objects.FieldPart;
 import objects.Velocity;
 
 /**
@@ -169,5 +170,19 @@ public class MyMath {
      */
     public static double polarModule(double x, double y) {
         return Math.sqrt(x*x + y*y);
+    }
+
+    /**
+     * Перевод полярных координат в декартовы
+     *
+     * @param module модуль вектора
+     * @param angle угол в радианах
+     * @return декартовы координаты точки
+     */
+    public static FieldObject polarToDecart(double module, double angle) {
+        FieldObject decart = new FieldObject();
+        decart.setPosX(module * Math.cos(angle));
+        decart.setPosY(module * Math.sin(angle));
+        return decart;
     }
 }

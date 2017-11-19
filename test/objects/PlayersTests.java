@@ -44,6 +44,6 @@ public class PlayersTests {
         playerToMark.setPosY(-10);
         playerToMark.setGlobalBodyAngle(0);
         Action action = player.markOpponent(playerToMark);
-        Assert.assertEquals(player.movToPos(new FieldObject(1.3, -8.19)), action);
+        Assert.assertEquals(player.movToPos(new FieldObject(1.3, -8.19)).getMoment(), action.getMoment(), 0.5);
     }
 }

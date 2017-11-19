@@ -47,4 +47,7 @@ public class ServerParameters {
 
     public static final double kick_rand = 0.006; // для обычных игроков = 0.00, страница 29 Бойра и Кока
     public static final double kick_power_rate = 0.027;
+
+    public static final int FIELD_WIDTH = 105;
+    public static final int FIELD_HEIGHT = 68;
 }

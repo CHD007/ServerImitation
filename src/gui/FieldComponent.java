@@ -17,8 +17,8 @@ import java.util.*;
 public class FieldComponent extends JPanel {
     private static final double scale = 6.0;
 
-    private static final int DEFAULT_WIDTH = 105 * (int) scale;
-    private static final int DEFAULT_HEIGHT = 68 * (int) scale;
+    private static final int DEFAULT_WIDTH = ServerParameters.FIELD_WIDTH * (int) scale;
+    private static final int DEFAULT_HEIGHT = ServerParameters.FIELD_HEIGHT * (int) scale;
 
 
     private java.util.List<Player> players;

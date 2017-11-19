@@ -735,6 +735,32 @@ public class Player extends MobileObject {
 
     }
 
+    public Action markOpponent(MobileObject playerToMark) {
+        FieldObject ourGoal = new FieldObject(ServerParameters.FIELD_WIDTH / 2.0, 0);
+        double distanceBetweenOpponentAndOurGoal = MyMath.distance(playerToMark, ourGoal);
+        double distanceBetweenOpponentAndMe = MyMath.distance(this, playerToMark);
+        double distanceBetweenMeAndOurGoal = MyMath.distance(this, ourGoal);
+        double angleBetweenMeAndOurGoalToOpponentInRadians = Math.acos((Math.pow(distanceBetweenOpponentAndOurGoal, 2) +
+                Math.pow(distanceBetweenOpponentAndMe, 2) - Math.pow(distanceBetweenMeAndOurGoal, 2))
+                / (2 * distanceBetweenOpponentAndOurGoal * distanceBetweenOpponentAndMe));
+        double angleToPointToMovInRadians = Math.toRadians(90.0 - Math.toDegrees(angleBetweenMeAndOurGoalToOpponentInRadians));
+        double distanceToPointToMov = Math.cos(angleToPointToMovInRadians) * distanceBetweenOpponentAndMe;
+        double angleBetweenOurGoalAndOpponentToMeInRadians = Math.acos((Math.pow(distanceBetweenOpponentAndMe, 2)
+                + Math.pow(distanceBetweenMeAndOurGoal, 2) - Math.pow(distanceBetweenOpponentAndOurGoal, 2))
+                / (2 * distanceBetweenOpponentAndMe * distanceBetweenMeAndOurGoal));
+        if (playerToMark.getPosY() <= getPosY()) {
+            // угол к точке отрицателен
+            angleToPointToMovInRadians = Math.toRadians(-(Math.toDegrees(angleBetweenOurGoalAndOpponentToMeInRadians) - Math.toDegrees(angleToPointToMovInRadians)));
+        } else {
+            // угол к точке положителен
+            angleToPointToMovInRadians = Math.toRadians(Math.toDegrees(angleBetweenOurGoalAndOpponentToMeInRadians) - Math.toDegrees(angleToPointToMovInRadians));
+        }
+        FieldObject pointToMovRelativeToPlayer = MyMath.polarToDecart(distanceToPointToMov, angleToPointToMovInRadians);
+        double globalPosXToMove = MyMath.unRelativeX(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
+        double globalPosYToMove = MyMath.unRelativeY(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
+        return movToPos(new FieldObject(globalPosXToMove, globalPosYToMove));
+    }
+
     /**
      * Алгоритм открытия под пас.
      * В данном действии доступно три тактики октрытия под пас:
