@@ -25,13 +25,13 @@ public class Manager {
         Player agentPlayer1 = new Player();
         agentPlayer1.setCommand(Command.OUR);
         agentPlayer1.setGlobalBodyAngle(0);
-        agentPlayer1.setPosX(-10);
-        agentPlayer1.setPosY(-10);
+        agentPlayer1.setPosX(0);
+        agentPlayer1.setPosY(10);
         Player agentPlayer2 = new Player();
         agentPlayer2.setGlobalBodyAngle(-180);
         agentPlayer2.setCommand(Command.OPPOSSITE);
-        agentPlayer2.setPosX(0);
-        agentPlayer2.setPosY(0);
+        agentPlayer2.setPosX(20);
+        agentPlayer2.setPosY(15);
         Player agentPlayer3 = new Player();
         agentPlayer3.setGlobalBodyAngle(-180);
         agentPlayer3.setPosX(20);
