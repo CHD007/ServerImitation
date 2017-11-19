@@ -10,6 +10,7 @@ public enum ActionsEnum {
     INTERSEPT("Перехват мяча"),
     PASS("Пас"),
     DRIBBLING("Ведение мяча"),
+    BLOCK_OPPONENT("Блокирования оппонента от получения паса"),
     MARK_OPPONENT("Опека оппонента"),
     KEEP_TO_OFFSIDE("Держаться на уровне посл. защитника"),
     NOTHING("Ничего не делать"),

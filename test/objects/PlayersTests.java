@@ -32,4 +32,18 @@ public class PlayersTests {
         Action outplayingBackAction = player.outplayingOpponent(new MobileObject(), AdditionalActionParameters.BACK);
         Assert.assertEquals(player.movToPos(new FieldObject(player.getPosX() - 5, player.getPosY())), outplayingBackAction);
     }
+
+    /**
+     * Тестирование простого блокирования игрока (преградить ему путь к нашим воротам).
+     * Т.е. нужно встать на линии заданного игрока и наших ворот.
+     */
+    @Test
+    public void markOpponentSimpleTest() {
+        Player playerToMark = new Player();
+        playerToMark.setPosX(-10);
+        playerToMark.setPosY(-10);
+        playerToMark.setGlobalBodyAngle(0);
+        Action action = player.markOpponent(playerToMark);
+        Assert.assertEquals(player.movToPos(new FieldObject(1.3, -8.19)), action);
+    }
 }

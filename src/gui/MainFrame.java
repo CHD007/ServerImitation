@@ -413,7 +413,7 @@ public class MainFrame extends JFrame {
                     }
                     break;
 
-                case MARK_OPPONENT:
+                case BLOCK_OPPONENT:
                     if (validateInitialDataBox()) {
                         Number pointX = (Number)textFieldPointForPassPosX.getValue();
                         Number pointY = (Number)textFieldPointForPassPosY.getValue();
@@ -505,7 +505,7 @@ public class MainFrame extends JFrame {
                     agentPlayer.getLastDefender();
                     break;
 
-                case MARK_OPPONENT:
+                case BLOCK_OPPONENT:
                     JOptionPane.showMessageDialog(null, "Mark opponent algorithm");
                     break;
             }
