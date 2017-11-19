@@ -766,8 +766,10 @@ public class Player extends MobileObject {
             angleToPointToMovInRadians = Math.toRadians(Math.toDegrees(angleBetweenOurGoalAndOpponentToMeInRadians) - Math.toDegrees(angleToPointToMovInRadians));
         }
         FieldObject pointToMovRelativeToPlayer = MyMath.polarToDecart(distanceToPointToMov, angleToPointToMovInRadians);
-        double globalPosXToMove = MyMath.unRelativeX(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
-        double globalPosYToMove = MyMath.unRelativeY(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
+        double relativeX = MyMath.relativeX(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
+        double relativeY = MyMath.relativeY(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
+        double globalPosXToMove = MyMath.unRelativeX(getPosX(), getPosY(), relativeX, relativeY, getGlobalBodyAngle());
+        double globalPosYToMove = MyMath.unRelativeY(getPosX(), getPosY(), relativeX, relativeY, getGlobalBodyAngle());
         return movToPos(new FieldObject(globalPosXToMove, globalPosYToMove));
     }
 
