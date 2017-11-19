@@ -50,6 +50,7 @@ public class Player extends MobileObject {
 
     private ActionsEnum globalActionType = ActionsEnum.NOTHING;
     private AdditionalActionParameters actionParameter;
+    private MobileObject objectToPlayWith = null; // объект, для которого выполняется текущее глобальное действие
 
     //глобальная скорость мяча
     private Velocity currentBallVelocity;
@@ -216,6 +217,14 @@ public class Player extends MobileObject {
 
             case KEEP_TO_OFFSIDE:
                 setAction(keepInLineWithLastDefender(actionParameter));
+                break;
+
+            case OUTPLAYING:
+                setAction(outplayingOpponent(objectToPlayWith, actionParameter));
+                break;
+
+            case MARK_OPPONENT:
+                setAction(markOpponent(objectToPlayWith));
                 break;
 
             default:
@@ -736,6 +745,7 @@ public class Player extends MobileObject {
     }
 
     public Action markOpponent(MobileObject playerToMark) {
+        objectToPlayWith = playerToMark;
         FieldObject ourGoal = new FieldObject(ServerParameters.FIELD_WIDTH / 2.0, 0);
         double distanceBetweenOpponentAndOurGoal = MyMath.distance(playerToMark, ourGoal);
         double distanceBetweenOpponentAndMe = MyMath.distance(this, playerToMark);
@@ -773,6 +783,8 @@ public class Player extends MobileObject {
      * @return действие (turn | dash), которое нужно выполинть в следующем цикле
      */
     public Action outplayingOpponent(MobileObject opponentToOutplaying, AdditionalActionParameters actionParameter) {
+        objectToPlayWith = opponentToOutplaying;
+        this.actionParameter = actionParameter;
         double smallDeltaToBeSure = 1;
         double posY;
         double posX;
