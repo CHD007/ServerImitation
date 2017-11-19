@@ -428,11 +428,14 @@ public class MainFrame extends JFrame {
                     break;
 
                 case OUTPLAYING:
-                    if (validateInitialDataBox()) {
-                        Action outplayingAction = agentPlayer.outplayingOpponent(manager.getPlayerList().get(2),
-                                (AdditionalActionParameters) additionalparameters.getSelectedItem());
-                        agentPlayer.setAction(outplayingAction);
-                    }
+                    Action outplayingAction = agentPlayer.outplayingOpponent(manager.getPlayerList().get(2),
+                            (AdditionalActionParameters) additionalparameters.getSelectedItem());
+                    agentPlayer.setAction(outplayingAction);
+                    break;
+
+                case MARK_OPPONENT:
+                    Action markOpponentAction = agentPlayer.markOpponent(manager.getPlayerList().get(1));
+                    agentPlayer.setAction(markOpponentAction);
                     break;
             }
             manager.getServerImitator().simulationStep();
