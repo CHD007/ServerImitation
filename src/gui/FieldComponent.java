@@ -3,6 +3,7 @@ package gui;
 import objects.Ball;
 import objects.Command;
 import objects.Player;
+import server.ServerParameters;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,19 +15,20 @@ import java.util.*;
  * Created by Danil on 05.03.2016.
  */
 public class FieldComponent extends JPanel {
-    private static final int DEFAULT_WIDTH = 525;
-    private static final int DEFAULT_HEIGHT = 340;
+    private static final double scale = 6.0;
 
-    private static final double scale = 5.0;
+    private static final int DEFAULT_WIDTH = 105 * (int) scale;
+    private static final int DEFAULT_HEIGHT = 68 * (int) scale;
+
 
     private java.util.List<Player> players;
     private Ball ball;
 
-    public static final double playerShapeWidth = 25;
-    public static final double playerShapeHeight = 25;
+    public static final double playerShapeWidth = (ServerParameters.kickable_margin + ServerParameters.ball_size + ServerParameters.player_size) * scale * 2;
+    public static final double playerShapeHeight = (ServerParameters.kickable_margin + ServerParameters.ball_size + ServerParameters.player_size) * scale * 2;
 
-    public static final double ballShapeWidth = 15;
-    public static final double ballShapeHeight = 15;
+    public static final double ballShapeWidth = 5;
+    public static final double ballShapeHeight = 5;
 
     public FieldComponent() {
         setBackground(new Color(48, 226, 76));
@@ -75,7 +77,8 @@ public class FieldComponent extends JPanel {
         g.drawLine(DEFAULT_WIDTH / 2, 0, DEFAULT_WIDTH / 2, DEFAULT_HEIGHT);
 
         // center circle
-        g.drawOval(DEFAULT_WIDTH / 2 - 35, DEFAULT_HEIGHT / 2 - 35, 70, 70);
+        int circleRadius = (int) (9.15 * scale);
+        g.drawOval(DEFAULT_WIDTH / 2 - circleRadius, DEFAULT_HEIGHT / 2 - circleRadius, circleRadius * 2, circleRadius * 2);
 
         // left goalie zone
         g.drawLine(0, new Double(14 * scale).intValue(), new Double(17 * scale).intValue(),

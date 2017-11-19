@@ -338,8 +338,8 @@ public class ServerImitator {
      * @param mobileObject объект для перемещения
      */
     public void changePosition(MobileObject mobileObject) {
-        mobileObject.setPosX(mobileObject.getPosX()+mobileObject.getGlobalVelocity().getX());
-        mobileObject.setPosY(mobileObject.getPosY()+mobileObject.getGlobalVelocity().getY());
+        mobileObject.setPosX(mobileObject.getPosX() + mobileObject.getGlobalVelocity().getX());
+        mobileObject.setPosY(mobileObject.getPosY() + mobileObject.getGlobalVelocity().getY());
     }
 
     /**

@@ -41,7 +41,7 @@ public class ServerParameters {
 
     public static final double inertia_moment = 5.0;
 
-    public static final double player_size = 0.3;
+    public static final double player_size = 0.5;
     public static final double ball_size = 0.085;
     public static final double kickable_margin = 0.7;
 
