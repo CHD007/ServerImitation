@@ -731,9 +731,8 @@ public class Player extends MobileObject {
         /*
          * Вычисление координат точки для бега
          */
-        double angleBCS = Math.acos((Math.pow(distanceBetweenThisPlyaerAndPlayerToBlock, 2) +
-                Math.pow(distanceBetweenOppositePlayers, 2) - Math.pow(distanceBetweenThisPlayerAndPlayerWithBall, 2))
-                / (2 * distanceBetweenThisPlyaerAndPlayerToBlock * distanceBetweenOppositePlayers));
+        double angleBCS = MyMath.getAngleInRadiansByCosTheorem(distanceBetweenThisPlyaerAndPlayerToBlock,
+                distanceBetweenOppositePlayers, distanceBetweenThisPlayerAndPlayerWithBall);
         double CS = distanceBetweenThisPlyaerAndPlayerToBlock * Math.cos(angleBCS);
         double angleHCS = Math.acos(Math.abs((playerWithBall.getPosX() - opponentToBlock.getPosX())) / distanceBetweenOppositePlayers);
         double xDifference = CS * Math.cos(angleHCS);
