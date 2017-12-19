@@ -185,4 +185,17 @@ public class MyMath {
         decart.setPosY(module * Math.sin(angle));
         return decart;
     }
+
+    /**
+     * Вычисляет угол в радианах по теореме косинусов по трем сторонам треугольника.
+     *
+     * @param firstAdjoiningSide первая прилигающая сторона к углу, который хотим найти
+     * @param secondAdjoingSide вторая прилигающая сторона к углу, который хотим найти
+     * @param opposingSide противолежащая сторона угла, который хотим найти
+     * @return угол в радианах
+     */
+    public static double getAngleInRadiansByCosTheorem(double firstAdjoiningSide, double secondAdjoingSide, double opposingSide) {
+        return Math.acos((Math.pow(firstAdjoiningSide, 2) + Math.pow(secondAdjoingSide, 2) - Math.pow(opposingSide, 2))
+                / (2 * firstAdjoiningSide * secondAdjoingSide));
+    }
 }
