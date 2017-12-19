@@ -100,11 +100,11 @@ public class Player extends MobileObject {
     public void addOppositeTeamPlayer(Player player) {
         oppositeTeamPlayers.add(player);
     }
-    
+
     public Command getCommand() {
         return command;
     }
-    
+
     public void setCommand(Command command) {
         this.command = command;
         if (command.equals(Command.OUR)) {
@@ -113,7 +113,7 @@ public class Player extends MobileObject {
             this.ourFieldPart = FieldPart.RIGHT;
         }
     }
-    
+
     public Action getAction() {
         return action;
     }
@@ -237,7 +237,7 @@ public class Player extends MobileObject {
      * @return величина угла, которая должна быть передана команде turn для поворота на желаемый угол a
      */
     public double getAngleForTurn(double a) {
-        double turnParameter = a*(1.0 + ServerParameters.inertia_moment*MyMath.velocityModule(getGlobalVelocity()));
+        double turnParameter = a * (1.0 + ServerParameters.inertia_moment * MyMath.velocityModule(getGlobalVelocity()));
         if (turnParameter > 180) {
             turnParameter = 180;
         } else {
@@ -250,6 +250,7 @@ public class Player extends MobileObject {
 
     /**
      * Выдает силу для команды dash необходимую для достижения заданной точки (x,y)
+     *
      * @param x координата x желаемой точки относительно игрока
      * @param y координата y желаемой точки относительно игрока
      * @return сила рывка для команды dash
@@ -257,12 +258,13 @@ public class Player extends MobileObject {
     public double getPowerForDash(double x, double y) {
         double distance = Math.min(ServerParameters.player_speed_max, x);
         // НАДО ПРОВЕРИТЬ (угол скорости игрока и его глобальный угол)
-        double dashParameter = (distance- MyMath.velocityModule(getGlobalVelocity()))/(ServerParameters.dash_power_rate*effort);
+        double dashParameter = (distance - MyMath.velocityModule(getGlobalVelocity())) / (ServerParameters.dash_power_rate * effort);
         return MyMath.normalizePower(dashParameter);
     }
 
     /**
      * Обновление body sense после получения senseMessage
+     *
      * @param senseMessage
      */
     public void updateBodySense(SenseMessage senseMessage) {
@@ -273,6 +275,7 @@ public class Player extends MobileObject {
 
     /**
      * Обновление визуальнйо информации после получения seeMessage
+     *
      * @param seeMessage
      */
     public void updateSeeSense(SeeMessage seeMessage) {
@@ -297,6 +300,7 @@ public class Player extends MobileObject {
 
     /**
      * Вычисление угла до точки относительно игрока
+     *
      * @param point глобальные координаты точки
      * @return относительный угол
      */
@@ -310,6 +314,7 @@ public class Player extends MobileObject {
 
     /**
      * Вычисление угла до точки относительно игрока
+     *
      * @param point координаты точки относительно игрока
      * @return относительный угол
      */
@@ -319,6 +324,7 @@ public class Player extends MobileObject {
 
     /**
      * Поворот тела к точке с глобальными координатами (x,y)
+     *
      * @param point точки куда нужно повернуться с глобальными координатами
      * @return действие, которое нужно совершить, чтобы повернуться к точке с координатми (x,y)
      */
@@ -332,6 +338,7 @@ public class Player extends MobileObject {
 
     /**
      * Рывок к точке с глобальными координатами (x,y)
+     *
      * @param point точка куда нужно прибежать с глобальными координатами
      * @return действие, которое нужно совершить, чтобы прибежатьы к точке с координатми (x,y)
      */
@@ -349,40 +356,43 @@ public class Player extends MobileObject {
      * Оценка скорости мяча на основе данных о его предыдущем расположении и текущем
      */
     public void positionBasedVelocityEstimation() {
-        currentBallVelocity.setX((ballGlobalPosX - oldBallGlobalPosX)*ServerParameters.ball_decay);
-        currentBallVelocity.setY((ballGlobalPosY - oldBallGlobalPosY)*ServerParameters.ball_decay);
+        currentBallVelocity.setX((ballGlobalPosX - oldBallGlobalPosX) * ServerParameters.ball_decay);
+        currentBallVelocity.setY((ballGlobalPosY - oldBallGlobalPosY) * ServerParameters.ball_decay);
     }
 
     /**
      * Предполагаемая глобальная координата x мяча
+     *
      * @param n
      * @return Предполагаемая координата x мяча относительно игрока в цикле t+n
      */
     public double predictedBallPosX(int n) {
         System.out.println("prediectedBallPosX() ballPasX = " + ballPosX);
         System.out.println("prediectedBallPosX() currentBallVelocityX = " + getCurrentBallVelocity().getX());
-        System.out.println("prediectedBallPosX() predictedBallPasX = " + (ballGlobalPosX + currentBallVelocity.getX()*(1-Math.pow(ServerParameters.ball_decay, n))/(1-ServerParameters.ball_decay)));
-        return ballGlobalPosX + currentBallVelocity.getX()*(1-Math.pow(ServerParameters.ball_decay, n))/(1-ServerParameters.ball_decay);
+        System.out.println("prediectedBallPosX() predictedBallPasX = " + (ballGlobalPosX + currentBallVelocity.getX() * (1 - Math.pow(ServerParameters.ball_decay, n)) / (1 - ServerParameters.ball_decay)));
+        return ballGlobalPosX + currentBallVelocity.getX() * (1 - Math.pow(ServerParameters.ball_decay, n)) / (1 - ServerParameters.ball_decay);
     }
 
     public double predictedBallPosY(int n) {
-        return ballGlobalPosY+ currentBallVelocity.getY()*(1-Math.pow(ServerParameters.ball_decay, n))/(1-ServerParameters.ball_decay);
+        return ballGlobalPosY + currentBallVelocity.getY() * (1 - Math.pow(ServerParameters.ball_decay, n)) / (1 - ServerParameters.ball_decay);
     }
 
     /**
      * Предполагаемая позиция игрока (глобальная) в цикле t+n, если он не выполняет не каких действий, а движется по инерции
+     *
      * @param n цикл t+n
      * @return предполагаемая позиция игрока в цикле t+n
      */
     public FieldObject playerPredictedGlobalPosition(int n) {
         FieldObject playerPredictedPosition = new FieldObject();
-        playerPredictedPosition.setPosX(posX + globalVelocity.getX()*(1-Math.pow(ServerParameters.player_decay, n))/(1-ServerParameters.player_decay));
-        playerPredictedPosition.setPosY(posY + globalVelocity.getY()*(1-Math.pow(ServerParameters.player_decay, n))/(1-ServerParameters.player_decay));
+        playerPredictedPosition.setPosX(posX + globalVelocity.getX() * (1 - Math.pow(ServerParameters.player_decay, n)) / (1 - ServerParameters.player_decay));
+        playerPredictedPosition.setPosY(posY + globalVelocity.getY() * (1 - Math.pow(ServerParameters.player_decay, n)) / (1 - ServerParameters.player_decay));
         return playerPredictedPosition;
     }
 
     /**
      * Предполагаемая позиция мяча (глобальная) в цикле t+n
+     *
      * @param n цикл t+n
      * @return предполагаемая позиция игрока в цикле t+n
      */
@@ -395,23 +405,25 @@ public class Player extends MobileObject {
     }
 
     public int predictNrCyclesToPoint(FieldObject point) {
-        int n = (int)((MyMath.distance(this, point)/ServerParameters.player_speed_max)
-                + Math.abs((getRelativeAngleToGlobalPoint(point))/turnCorrection));
+        int n = (int) ((MyMath.distance(this, point) / ServerParameters.player_speed_max)
+                + Math.abs((getRelativeAngleToGlobalPoint(point)) / turnCorrection));
         return n;
     }
 
     /**
      * Вычисление действительного угла поворота
+     *
      * @param moment желаемый угол поворота
      * @return действительный угол поворота
      */
     public double predictedActAngle(double moment) {
         double playerSpeed = MyMath.velocityModule(getGlobalVelocity());
-        return moment/(1.0 + ServerParameters.inertia_moment * playerSpeed);
+        return moment / (1.0 + ServerParameters.inertia_moment * playerSpeed);
     }
 
     /**
      * Изменение скорости игрока в зависимости от действия, которое он исполняет (dash)
+     *
      * @param player игрок, для которого нужно изменить скорость
      * @param action действие, в котором находится сила рывка
      */
@@ -419,8 +431,8 @@ public class Player extends MobileObject {
         Velocity oldVelocity = player.getGlobalVelocity();
         action.setPower(MyMath.normalizePower(action.getPower()));
         Velocity acceleration = predictedAcceleration(action.getPower(), player.getGlobalBodyAngle());
-        player.getGlobalVelocity().setX(oldVelocity.getX()+acceleration.getX());
-        player.getGlobalVelocity().setY(oldVelocity.getY()+acceleration.getY());
+        player.getGlobalVelocity().setX(oldVelocity.getX() + acceleration.getX());
+        player.getGlobalVelocity().setY(oldVelocity.getY() + acceleration.getY());
         if (MyMath.velocityModule(player.getGlobalVelocity()) > ServerParameters.player_speed_max) {
             MyMath.normalizeVector(player.getGlobalVelocity());
         }
@@ -428,23 +440,25 @@ public class Player extends MobileObject {
 
     /**
      * Вычисление действительной силы, зависящей от запаса сил игрока.
+     *
      * @param power сила, с которой игрок хочет увеличить скорость
      * @return действительная сила
      */
     public double predictedActPower(double power) {
-        return power*getEffort();
+        return power * getEffort();
     }
 
     /**
      * Вычисление вектора ускорения
+     *
      * @param power сила, с которой игрок хочет увеличить скорость
      * @param angle глобольный угол игрока, либо мяча
      * @return вектор ускорения
      */
     public Velocity predictedAcceleration(double power, double angle) {
         Velocity acceleration = new Velocity();
-        acceleration.setX(predictedActPower(power)* ServerParameters.dash_power_rate*Math.cos(Math.toRadians(angle)));
-        acceleration.setY(predictedActPower(power)* ServerParameters.dash_power_rate*Math.sin(Math.toRadians(angle)));
+        acceleration.setX(predictedActPower(power) * ServerParameters.dash_power_rate * Math.cos(Math.toRadians(angle)));
+        acceleration.setY(predictedActPower(power) * ServerParameters.dash_power_rate * Math.sin(Math.toRadians(angle)));
         if (MyMath.velocityModule(acceleration) > ServerParameters.player_accel_max) {
             MyMath.normalizeVector(acceleration);
         }
@@ -453,19 +467,19 @@ public class Player extends MobileObject {
 
     /**
      * Метод, который возвращает предсказанную позицию игрока после выполнения команды cmd
+     *
      * @param player позиция, относительно которой идет предсказание
-     * @param cmd действие, выполняемое игроком
+     * @param cmd    действие, выполняемое игроком
      * @return
      */
     public Player predictedPlayerStateAfterAction(Player player, Action cmd) {
         Player playerAfterAction = new Player(player);
         switch (cmd.getActionType()) {
             case "turn":
-                double angle = player.getGlobalBodyAngle()+predictedActAngle(action.getMoment());
+                double angle = player.getGlobalBodyAngle() + predictedActAngle(action.getMoment());
                 if (angle > 180) {
-                    angle = -360+angle;
-                }
-                else {
+                    angle = -360 + angle;
+                } else {
                     if (angle < -180) {
                         angle = 360 + angle;
                     }
@@ -485,6 +499,7 @@ public class Player extends MobileObject {
 
     /**
      * Возвращает желаемую точку перехвата с глобальными координатами
+     *
      * @return желаемая точка перехвата, null - если ее нет
      */
     public FieldObject getDesiredInterceptionPoint() {
@@ -495,11 +510,11 @@ public class Player extends MobileObject {
         //вычисление уголового коэффициента прямой l
         double k = Math.atan(Math.toRadians(globalBodyAngle));
         //вычисление с
-        double c = -k*playerPredictedPosition.getPosX() + playerPredictedPosition.getPosY();
+        double c = -k * playerPredictedPosition.getPosX() + playerPredictedPosition.getPosY();
         //Вычисление предполагаемой точки мяча в цикле t+1
         FieldObject ballPredictedPosition = ballPredictedGlobalPosition(1);
         //Вычисление радиуса окружности c
-        double R = ServerParameters.ball_size + ServerParameters.player_size + ServerParameters.kickable_margin/6;
+        double R = ServerParameters.ball_size + ServerParameters.player_size + ServerParameters.kickable_margin / 6;
         //Параметр a уравнения окружности (x-a)^2 + (y-b)^2 = R^2
         double a = ballPredictedPosition.getPosX();
         //Параметр b уравнения окружности (x-a)^2 + (y-b)^2 = R^2
@@ -510,26 +525,26 @@ public class Player extends MobileObject {
             |(x-a)^2 + (y-b)^2 = R^2
         Найдем дискрименант уравнения, полученного после небольших преобразований этой системы уравнений
          */
-        double D = Math.pow(2*k*(c-b)-2*a, 2) - 4*(k*k+1)*(a*a+Math.pow(c-b, 2)-R*R);
+        double D = Math.pow(2 * k * (c - b) - 2 * a, 2) - 4 * (k * k + 1) * (a * a + Math.pow(c - b, 2) - R * R);
 
         if (D == 0) { // одна точка пересечения
             FieldObject desiredInterceptionPoint = new FieldObject();
-            double x = -b/2/a;
+            double x = -b / 2 / a;
             desiredInterceptionPoint.setPosX(x);
-            double y = k*x + c;
+            double y = k * x + c;
             desiredInterceptionPoint.setPosY(y);
             return desiredInterceptionPoint;
         }
         if (D > 0) { // две точки пересечения
             FieldObject point1 = new FieldObject();
-            double x = (-b + Math.sqrt(D))/2/a;
+            double x = (-b + Math.sqrt(D)) / 2 / a;
             point1.setPosX(x);
-            double y = k*x + c;
+            double y = k * x + c;
             point1.setPosY(y);
             FieldObject point2 = new FieldObject();
-            x = (-b - Math.sqrt(D))/2/a;
+            x = (-b - Math.sqrt(D)) / 2 / a;
             point1.setPosX(x);
-            y = k*x + c;
+            y = k * x + c;
             point1.setPosY(y);
             //Выбрать в качетсве точки перехвата ту, у которой абсолютрный угол между ней и центром окружности c меньше
             double relPosXP1 = MyMath.relativeX(playerPredictedPosition.getPosX(), playerPredictedPosition.getPosY(), point1.getPosX(), point1.getPosY(), globalBodyAngle);
@@ -575,6 +590,7 @@ public class Player extends MobileObject {
 
     /**
      * Перемещение к заданной точке
+     *
      * @param point точка, к которой нужно подбежать
      * @return одна из команд последовательности команд, необходимых для достижения заданной точки
      */
@@ -617,8 +633,9 @@ public class Player extends MobileObject {
 
     /**
      * Пас партнеру
-     * @param x глобальная координата x точки, в которую нужно ударить мяч
-     * @param y глобальная координата y точки, в которую нужно ударить мяч
+     *
+     * @param x       глобальная координата x точки, в которую нужно ударить мяч
+     * @param y       глобальная координата y точки, в которую нужно ударить мяч
      * @param circles кол-во циклов симуляции
      * @return
      */
@@ -627,7 +644,7 @@ public class Player extends MobileObject {
         double relativeY = MyMath.relativeY(posX, posY, x, y, globalBodyAngle);
 
         // расстояние между игроком и точкой, в которую нужно ударить мяч
-        double distanseBetweenPlayerAndPointForPass = Math.sqrt(Math.pow(Math.abs(x-posX), 2)
+        double distanseBetweenPlayerAndPointForPass = Math.sqrt(Math.pow(Math.abs(x - posX), 2)
                 + Math.pow(Math.abs(y - posY), 2));
         // скорость мяча после удара, такая, что мяч достигне указанную точку за circles циклов
         double velocityModule = (distanseBetweenPlayerAndPointForPass * (1 - ServerParameters.ball_decay)) / (1 - Math.pow(ServerParameters.ball_decay, circles));
@@ -636,10 +653,10 @@ public class Player extends MobileObject {
         double angleBetweenTheBallAndPlayer = getRelativeAngleToGlobalPoint(ball);
         double distanceBetwennPlayerAndBall = MyMath.distance(this, ball);
         // действительная сила удара
-        double actPower = ServerParameters.kick_power_rate * (1 - 0.25*angleBetweenTheBallAndPlayer/180
-                - 0.25*distanceBetwennPlayerAndBall/ServerParameters.kickable_margin);
+        double actPower = ServerParameters.kick_power_rate * (1 - 0.25 * angleBetweenTheBallAndPlayer / 180
+                - 0.25 * distanceBetwennPlayerAndBall / ServerParameters.kickable_margin);
         // сила удара, передваемая команде kick
-        double kickPower = velocityModule/actPower;
+        double kickPower = velocityModule / actPower;
 
 //        double angleForKick = Math.toDegrees(Math.acos(relativeX/distanseBetweenPlayerAndPointForPass));
         double angleForKick = MyMath.polarAngle(relativeX, relativeY);
@@ -650,18 +667,20 @@ public class Player extends MobileObject {
         action.setActionType("kick");
         return action;
     }
-    
+
     /**
      * Находит последнего защитника противоположной команды
+     *
      * @return последний защитник
      */
     public Player getLastDefender() {
         oppositeTeamPlayers.sort((p1, p2) -> -Double.valueOf(p1.getPosX()).compareTo(p2.getPosX()));
         return oppositeTeamPlayers.get(0);
     }
-    
+
     /**
      * Держаться на линии последнего защитника
+     *
      * @return действие "бежать в точку" с координатами, которые игрок вычислил
      */
     public Action keepInLineWithLastDefender(AdditionalActionParameters actionParameter) {
@@ -673,11 +692,11 @@ public class Player extends MobileObject {
             case LEFT:
                 posToMove.setPosY(posToMove.getPosY() - OFFSET);
                 break;
-                
+
             case RIGHT:
                 posToMove.setPosY(posToMove.getPosY() + OFFSET);
                 break;
-                
+
             case BACK:
                 posToMove.setPosX(posToMove.getPosX() - OFFSET);
                 break;
@@ -687,6 +706,7 @@ public class Player extends MobileObject {
 
     /**
      * Блокировка игрока от паса
+     *
      * @param opponentToBlock fieldObject с глобальными координатами, описывающий оппонента, которого нужно заблокировать
      * @return бег в точку для блокирования
      */
@@ -713,9 +733,9 @@ public class Player extends MobileObject {
          */
         double angleBCS = Math.acos((Math.pow(distanceBetweenThisPlyaerAndPlayerToBlock, 2) +
                 Math.pow(distanceBetweenOppositePlayers, 2) - Math.pow(distanceBetweenThisPlayerAndPlayerWithBall, 2))
-                /(2 * distanceBetweenThisPlyaerAndPlayerToBlock * distanceBetweenOppositePlayers));
+                / (2 * distanceBetweenThisPlyaerAndPlayerToBlock * distanceBetweenOppositePlayers));
         double CS = distanceBetweenThisPlyaerAndPlayerToBlock * Math.cos(angleBCS);
-        double angleHCS = Math.acos(Math.abs((playerWithBall.getPosX() - opponentToBlock.getPosX()))/distanceBetweenOppositePlayers);
+        double angleHCS = Math.acos(Math.abs((playerWithBall.getPosX() - opponentToBlock.getPosX())) / distanceBetweenOppositePlayers);
         double xDifference = CS * Math.cos(angleHCS);
         double yDifference = CS * Math.sin(angleHCS);
 
@@ -746,31 +766,32 @@ public class Player extends MobileObject {
 
     public Action markOpponent(MobileObject playerToMark) {
         objectToPlayWith = playerToMark;
-        FieldObject ourGoal = new FieldObject(ServerParameters.FIELD_WIDTH / 2.0, 0);
+        FieldObject ourGoal = new FieldObject((double) ServerParameters.FIELD_WIDTH / 2.0, 0.0);
         double distanceBetweenOpponentAndOurGoal = MyMath.distance(playerToMark, ourGoal);
         double distanceBetweenOpponentAndMe = MyMath.distance(this, playerToMark);
         double distanceBetweenMeAndOurGoal = MyMath.distance(this, ourGoal);
         double angleBetweenMeAndOurGoalToOpponentInRadians = Math.acos((Math.pow(distanceBetweenOpponentAndOurGoal, 2) +
                 Math.pow(distanceBetweenOpponentAndMe, 2) - Math.pow(distanceBetweenMeAndOurGoal, 2))
                 / (2 * distanceBetweenOpponentAndOurGoal * distanceBetweenOpponentAndMe));
-        double angleToPointToMovInRadians = Math.toRadians(90.0 - Math.toDegrees(angleBetweenMeAndOurGoalToOpponentInRadians));
-        double distanceToPointToMov = Math.cos(angleToPointToMovInRadians) * distanceBetweenOpponentAndMe;
+        double angleBetweenMeAndOpponentToPointToMovInRadians = Math.toRadians(90.0 - Math.toDegrees(angleBetweenMeAndOurGoalToOpponentInRadians));
+        double distanceToPointToMov = Math.cos(angleBetweenMeAndOpponentToPointToMovInRadians) * distanceBetweenOpponentAndMe;
         double angleBetweenOurGoalAndOpponentToMeInRadians = Math.acos((Math.pow(distanceBetweenOpponentAndMe, 2)
                 + Math.pow(distanceBetweenMeAndOurGoal, 2) - Math.pow(distanceBetweenOpponentAndOurGoal, 2))
                 / (2 * distanceBetweenOpponentAndMe * distanceBetweenMeAndOurGoal));
+
+        double relativeAngleToPointInDegrees;
+        double relativeAngleToGlobalPoint = getRelativeAngleToGlobalPoint(ourGoal);
         if (playerToMark.getPosY() <= getPosY()) {
+            relativeAngleToPointInDegrees = relativeAngleToGlobalPoint - (Math.toDegrees(angleBetweenOurGoalAndOpponentToMeInRadians) - Math.toDegrees(Math.acos(distanceToPointToMov/distanceBetweenOpponentAndMe)));
             // угол к точке отрицателен
-            angleToPointToMovInRadians = Math.toRadians(-(Math.toDegrees(angleBetweenOurGoalAndOpponentToMeInRadians) - Math.toDegrees(angleToPointToMovInRadians)));
         } else {
             // угол к точке положителен
-            angleToPointToMovInRadians = Math.toRadians(Math.toDegrees(angleBetweenOurGoalAndOpponentToMeInRadians) - Math.toDegrees(angleToPointToMovInRadians));
+            relativeAngleToPointInDegrees = relativeAngleToGlobalPoint + (Math.toDegrees(angleBetweenOurGoalAndOpponentToMeInRadians) - Math.toDegrees(Math.acos(distanceToPointToMov/distanceBetweenOpponentAndMe)));
         }
-        FieldObject pointToMovRelativeToPlayer = MyMath.polarToDecart(distanceToPointToMov, angleToPointToMovInRadians);
-        double relativeX = MyMath.relativeX(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
-        double relativeY = MyMath.relativeY(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
-        double globalPosXToMove = MyMath.unRelativeX(getPosX(), getPosY(), relativeX, relativeY, getGlobalBodyAngle());
-        double globalPosYToMove = MyMath.unRelativeY(getPosX(), getPosY(), relativeX, relativeY, getGlobalBodyAngle());
-        return movToPos(new FieldObject(globalPosXToMove, globalPosYToMove));
+        FieldObject pointToMovRelativeToPlayer = MyMath.polarToDecart(distanceToPointToMov, Math.toRadians(relativeAngleToPointInDegrees));
+        double globalPosXToMov = MyMath.unRelativeX(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
+        double globalPosYToMov = MyMath.unRelativeY(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
+        return movToPos(new FieldObject(globalPosXToMov, globalPosYToMov));
     }
 
     /**
@@ -781,7 +802,7 @@ public class Player extends MobileObject {
      * 3) оттянуться назад к своим воротам.
      *
      * @param opponentToOutplaying игрок, от которого нужно оторваться
-     * @param actionParameter дополнительный параметр действия, определяющий одну из тактик, описынных выше
+     * @param actionParameter      дополнительный параметр действия, определяющий одну из тактик, описынных выше
      * @return действие (turn | dash), которое нужно выполинть в следующем цикле
      */
     public Action outplayingOpponent(MobileObject opponentToOutplaying, AdditionalActionParameters actionParameter) {
@@ -824,18 +845,19 @@ public class Player extends MobileObject {
      * Проверяет, находится ли мяч в kickable area.
      * Команда kick исполняется, только когда расстояние между центром мяча и центром игрока
      * минус радиус игрока и радиус мяча лежит в пределах от 0 до kickable_margin.
+     *
      * @return true - если мяч находится в kickable area, false - инача
      */
     private boolean isBallKickableForPlayer() {
         FieldObject ball = new FieldObject(ballPosX, ballPosY);
-        return  MyMath.distance(this, ball) <
+        return MyMath.distance(this, ball) <
                 (ServerParameters.ball_size + ServerParameters.player_size + ServerParameters.kickable_margin);
     }
 
     public Action dribbling(double x, double y, int circles) {
         if (isBallKickableForPlayer() && !ballKicked) {
             ballKicked = true;
-            return pass(x, y, circles-1);
+            return pass(x, y, circles - 1);
         } else {
             Action action = new Action();
             action.setActionType("dash");
