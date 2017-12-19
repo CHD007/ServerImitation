@@ -770,14 +770,15 @@ public class Player extends MobileObject {
         double distanceBetweenOpponentAndOurGoal = MyMath.distance(playerToMark, ourGoal);
         double distanceBetweenOpponentAndMe = MyMath.distance(this, playerToMark);
         double distanceBetweenMeAndOurGoal = MyMath.distance(this, ourGoal);
-        double angleBetweenMeAndOurGoalToOpponentInRadians = Math.acos((Math.pow(distanceBetweenOpponentAndOurGoal, 2) +
-                Math.pow(distanceBetweenOpponentAndMe, 2) - Math.pow(distanceBetweenMeAndOurGoal, 2))
-                / (2 * distanceBetweenOpponentAndOurGoal * distanceBetweenOpponentAndMe));
-        double angleBetweenMeAndOpponentToPointToMovInRadians = Math.toRadians(90.0 - Math.toDegrees(angleBetweenMeAndOurGoalToOpponentInRadians));
+        double angleBetweenMeAndOurGoalToOpponentInRadians =
+                MyMath.getAngleInRadiansByCosTheorem(distanceBetweenOpponentAndOurGoal, distanceBetweenOpponentAndMe,
+                        distanceBetweenMeAndOurGoal);
+        double angleBetweenMeAndOpponentToPointToMovInRadians =
+                Math.toRadians(90.0 - Math.toDegrees(angleBetweenMeAndOurGoalToOpponentInRadians));
         double distanceToPointToMov = Math.cos(angleBetweenMeAndOpponentToPointToMovInRadians) * distanceBetweenOpponentAndMe;
-        double angleBetweenOurGoalAndOpponentToMeInRadians = Math.acos((Math.pow(distanceBetweenOpponentAndMe, 2)
-                + Math.pow(distanceBetweenMeAndOurGoal, 2) - Math.pow(distanceBetweenOpponentAndOurGoal, 2))
-                / (2 * distanceBetweenOpponentAndMe * distanceBetweenMeAndOurGoal));
+        double angleBetweenOurGoalAndOpponentToMeInRadians =
+                MyMath.getAngleInRadiansByCosTheorem(distanceBetweenOpponentAndMe, distanceBetweenMeAndOurGoal,
+                        distanceBetweenOpponentAndOurGoal);
 
         double relativeAngleToPointInDegrees;
         double relativeAngleToGlobalPoint = getRelativeAngleToGlobalPoint(ourGoal);
