@@ -38,6 +38,23 @@ public class PlayersTests {
      * Т.е. нужно встать на линии заданного игрока и наших ворот.
      */
     @Test
+    public void markOpponentTest() {
+        Player playerToMark = new Player();
+        playerToMark.setPosX(0);
+        playerToMark.setPosY(10);
+        playerToMark.setGlobalBodyAngle(0);
+
+        Player me = new Player();
+        me.setPosX(20);
+        me.setPosY(15);
+        Action action = me.markOpponent(playerToMark);
+        Assert.assertEquals(me.movToPos(new FieldObject(18.4, 6.72)).getMoment(), action.getMoment(), 0.5);
+    }
+
+    /**
+     * Тестирование действия опеки игрока.
+     */
+    @Test
     public void markOpponentSimpleTest() {
         Player playerToMark = new Player();
         playerToMark.setPosX(-10);
