@@ -765,7 +765,26 @@ public class Player extends MobileObject {
 
     public Action markOpponent(MobileObject playerToMark) {
         objectToPlayWith = playerToMark;
+        FieldObject positionToMovOnMarkAction = getPositionToMovOnMarkAction(playerToMark);
+        int predictNrCyclesToPoint = predictNrCyclesToPoint(positionToMovOnMarkAction);
+
+
+        return movToPos(positionToMovOnMarkAction);
+    }
+
+    /**
+     * Находит точку пересечения перпендикуляра от этого игрока на линию, образованную оппонентом <tt>playerToMark</tt>
+     * и точкой центра наших ворот.
+     *
+     * @param playerToMark оппонент, которого опекаем (пытаемся помешать пробежать к нашим воротам)
+     * @return точка, в которую нужно бежать
+     */
+    private FieldObject getPositionToMovOnMarkAction(FieldObject playerToMark) {
         FieldObject ourGoal = new FieldObject((double) ServerParameters.FIELD_WIDTH / 2.0, 0.0);
+        if (FieldPart.LEFT.equals(ourFieldPart)) {
+            ourGoal.setPosX(-ourGoal.getPosX());
+        }
+
         double distanceBetweenOpponentAndOurGoal = MyMath.distance(playerToMark, ourGoal);
         double distanceBetweenOpponentAndMe = MyMath.distance(this, playerToMark);
         double distanceBetweenMeAndOurGoal = MyMath.distance(this, ourGoal);
@@ -791,7 +810,7 @@ public class Player extends MobileObject {
         FieldObject pointToMovRelativeToPlayer = MyMath.polarToDecart(distanceToPointToMov, Math.toRadians(relativeAngleToPointInDegrees));
         double globalPosXToMov = MyMath.unRelativeX(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
         double globalPosYToMov = MyMath.unRelativeY(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
-        return movToPos(new FieldObject(globalPosXToMov, globalPosYToMov));
+        return new FieldObject(globalPosXToMov, globalPosYToMov);
     }
 
     /**
