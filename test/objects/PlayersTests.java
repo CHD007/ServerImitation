@@ -3,6 +3,7 @@ package objects;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import server.MyMath;
 import utils.AdditionalActionParameters;
 
 import java.util.logging.Logger;
@@ -62,5 +63,19 @@ public class PlayersTests {
         playerToMark.setGlobalBodyAngle(0);
         Action action = player.markOpponent(playerToMark);
         Assert.assertEquals(player.movToPos(new FieldObject(1.3, -8.19)).getMoment(), action.getMoment(), 0.5);
+    }
+
+    @Test
+    public void predictPlayerPositionAfterNCyclesTest() {
+        Player player = new Player();
+        player.setPosX(0);
+        player.setPosY(0);
+        player.setGlobalBodyAngle(45);
+        Velocity velocity = new Velocity();
+        velocity.setX(0.5);
+        velocity.setY(0.5);
+        player.setGlobalVelocity(velocity);
+        FieldObject fieldObject = player.predictPlayerStateAfterNCycles(player, 3);
+        Assert.assertEquals(1.103, MyMath.distance(player, fieldObject), 0.05);
     }
 }
