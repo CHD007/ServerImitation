@@ -17,7 +17,7 @@ public class PlayersTests {
         player.setGlobalBodyAngle(0);
         player.setPosX(0);
         player.setPosY(0);
-        player.setCommand(Command.OUR);
+        player.setCommand(Command.OPPOSSITE);
     }
 
 
@@ -30,7 +30,7 @@ public class PlayersTests {
     @Test
     public void outplayingOpponentBackActionTest() {
         Action outplayingBackAction = player.outplayingOpponent(new MobileObject(), AdditionalActionParameters.BACK);
-        Assert.assertEquals(player.movToPos(new FieldObject(player.getPosX() - 5, player.getPosY())), outplayingBackAction);
+        Assert.assertEquals(player.movToPos(new FieldObject(player.getPosX() + 5, player.getPosY())).getMoment(), outplayingBackAction.getMoment(), 0.5);
     }
 
     /**
