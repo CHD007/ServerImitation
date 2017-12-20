@@ -390,6 +390,22 @@ public class Player extends MobileObject {
         return playerPredictedPosition;
     }
 
+
+    /**
+     * Определяет в какой точке окажется заданный игрок, если будет двигаться с той же скоростью и тем же направлением
+     * через заданное кол-во циклов
+     *
+     * @param player игрок, для которого его будущая позиция
+     * @param cycles число циклов
+     * @return точка, в которой окажется игрок <tt>player</tt> после <tt>cycles</tt> циклов
+     */
+    public FieldObject predictPlayerStateAfterNCycles(Player player, int cycles) {
+        FieldObject playerPredictedPosition = new FieldObject();
+        playerPredictedPosition.setPosX(player.posX + player.globalVelocity.getX() * (1 - Math.pow(ServerParameters.player_decay, cycles)) / (1 - ServerParameters.player_decay));
+        playerPredictedPosition.setPosY(player.posY + player.globalVelocity.getY() * (1 - Math.pow(ServerParameters.player_decay, cycles)) / (1 - ServerParameters.player_decay));
+        return playerPredictedPosition;
+    }
+
     /**
      * Предполагаемая позиция мяча (глобальная) в цикле t+n
      *
@@ -404,6 +420,12 @@ public class Player extends MobileObject {
         return ballPredictedPosition;
     }
 
+    /**
+     * Определяет сколько циклов потребуется данному игроку для движения в заданную точку с максимальной скоростью.
+     *
+     * @param point точка, количество циклов бега до которой определяется
+     * @return кол-во циклов для бега на максимальной скорости в заданную точку
+     */
     public int predictNrCyclesToPoint(FieldObject point) {
         int n = (int) ((MyMath.distance(this, point) / ServerParameters.player_speed_max)
                 + Math.abs((getRelativeAngleToGlobalPoint(point)) / turnCorrection));
@@ -763,9 +785,20 @@ public class Player extends MobileObject {
 
     }
 
+    /**
+     * Алгоритм опеки оппонента.
+     * Преграждаем путь игрока к нашим воротам.
+     *
+     * @param playerToMark опекаемый игрок
+     * @return действие для обеспечения преграждения игрока к нашим воротам.
+     */
     public Action markOpponent(MobileObject playerToMark) {
         objectToPlayWith = playerToMark;
+        // определяем точку для бега на основе текущего расположения оппонента
         FieldObject positionToMovOnMarkAction = getPositionToMovOnMarkAction(playerToMark);
+
+        playerToMark.getGlobalVelocity();
+        // определяем сколько нам потребуется циклов для движения в заданную точку
         int predictNrCyclesToPoint = predictNrCyclesToPoint(positionToMovOnMarkAction);
 
 
