@@ -44,6 +44,7 @@ public class PlayersTests {
         playerToMark.setPosX(0);
         playerToMark.setPosY(10);
         playerToMark.setGlobalBodyAngle(0);
+        playerToMark.setGlobalVelocity(null);
 
         Player me = new Player();
         me.setPosX(20);
@@ -61,10 +62,14 @@ public class PlayersTests {
         playerToMark.setPosX(-10);
         playerToMark.setPosY(-10);
         playerToMark.setGlobalBodyAngle(0);
+        playerToMark.setGlobalVelocity(null);
         Action action = player.markOpponent(playerToMark);
         Assert.assertEquals(player.movToPos(new FieldObject(1.3, -8.19)).getMoment(), action.getMoment(), 0.5);
     }
 
+    /**
+     * Тестирование метода предсказания позиции игрока после заданного кол-ва циклов
+     */
     @Test
     public void predictPlayerPositionAfterNCyclesTest() {
         Player player = new Player();
@@ -77,5 +82,27 @@ public class PlayersTests {
         player.setGlobalVelocity(velocity);
         FieldObject fieldObject = player.predictPlayerStateAfterNCycles(player, 3);
         Assert.assertEquals(1.103, MyMath.distance(player, fieldObject), 0.05);
+    }
+
+    /**
+     * Тест опеки при движении игрока.
+     */
+    @Test
+    public void markOpponentUsingPredictionTest() {
+        Player playerToMark = new Player();
+        playerToMark.setPosX(0);
+        playerToMark.setPosY(0);
+        playerToMark.setGlobalBodyAngle(0);
+        Velocity velocity = new Velocity();
+        velocity.setX(1);
+        velocity.setY(0);
+        playerToMark.setGlobalVelocity(velocity);
+
+        Player me = new Player();
+        me.setPosX(2);
+        me.setPosY(2);
+        me.setGlobalBodyAngle(-90);
+        Action action = me.markOpponent(playerToMark);
+        Assert.assertEquals(me.movToPos(new FieldObject(2, 0)).getMoment(), action.getMoment(), 0.5);
     }
 }
