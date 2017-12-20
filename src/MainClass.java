@@ -11,7 +11,7 @@ public class MainClass {
         EventQueue.invokeLater(() -> {
                     JFrame frame = new MainFrame();
                     frame.setTitle("Server Imitation");
-                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                     frame.setVisible(true);
                 }
         );
