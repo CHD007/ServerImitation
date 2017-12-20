@@ -399,7 +399,7 @@ public class Player extends MobileObject {
      * @param cycles число циклов
      * @return точка, в которой окажется игрок <tt>player</tt> после <tt>cycles</tt> циклов
      */
-    public FieldObject predictPlayerStateAfterNCycles(Player player, int cycles) {
+    public FieldObject predictPlayerStateAfterNCycles(MobileObject player, int cycles) {
         FieldObject playerPredictedPosition = new FieldObject();
         playerPredictedPosition.setPosX(player.posX + player.globalVelocity.getX() * (1 - Math.pow(ServerParameters.player_decay, cycles)) / (1 - ServerParameters.player_decay));
         playerPredictedPosition.setPosY(player.posY + player.globalVelocity.getY() * (1 - Math.pow(ServerParameters.player_decay, cycles)) / (1 - ServerParameters.player_decay));
@@ -796,12 +796,11 @@ public class Player extends MobileObject {
         objectToPlayWith = playerToMark;
         // определяем точку для бега на основе текущего расположения оппонента
         FieldObject positionToMovOnMarkAction = getPositionToMovOnMarkAction(playerToMark);
-
-        playerToMark.getGlobalVelocity();
-        // определяем сколько нам потребуется циклов для движения в заданную точку
-        int predictNrCyclesToPoint = predictNrCyclesToPoint(positionToMovOnMarkAction);
-
-
+        if (playerToMark.getGlobalVelocity() != null) { // если у нас есть информация о том, как двигался игрок и какая у него скорость
+            // определяем сколько нам потребуется циклов для движения в заданную точку
+            int predictNrCyclesToPoint = predictNrCyclesToPoint(positionToMovOnMarkAction);
+            positionToMovOnMarkAction = getPositionToMovOnMarkAction(predictPlayerStateAfterNCycles(playerToMark, predictNrCyclesToPoint));
+        }
         return movToPos(positionToMovOnMarkAction);
     }
 
