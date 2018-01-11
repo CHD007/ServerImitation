@@ -62,6 +62,7 @@ public class MainFrame extends JFrame {
         }
         fieldComponent.addBall(manager.getServerImitator().getBall());
         createVerticalBox();
+        preparePlayersForActions();
     }
 
     /**
@@ -289,26 +290,30 @@ public class MainFrame extends JFrame {
     public class BtnStartListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            Player player = (Player) playersComboBox.getSelectedItem();
-            setPlayerInfo(manager.getServerImitator().findPlayerById(player.getPlayerId()));
-            setBallInfo();
-
-            // обнуление информации о мяче для каждого игрока
-            Ball ball = manager.getServerImitator().getBall();
-            manager.getPlayerList().forEach(p -> {
-                p.setOldBallPosX(ball.getPosX());
-                p.setOldBallPosY(ball.getPosY());
-                p.setBallGlobalPosX(ball.getPosX());
-                p.setBallGlobalPosY(ball.getPosY());
-                p.setOldBallGlobalPosX(ball.getPosX());
-                p.setOldBallGlobalPosY(ball.getPosY());
-                p.setCurrentBallVelocity(new Velocity(ball.getGlobalVelocity()));
-            });
-
-            updatePlayersWordState();
-            manager.getServerImitator().beforeHalf();
-            paintShapes();
+            preparePlayersForActions();
         }
+    }
+
+    private void preparePlayersForActions() {
+        Player player = (Player) playersComboBox.getSelectedItem();
+        setPlayerInfo(manager.getServerImitator().findPlayerById(player.getPlayerId()));
+        setBallInfo();
+
+        // обнуление информации о мяче для каждого игрока
+        Ball ball = manager.getServerImitator().getBall();
+        manager.getPlayerList().forEach(p -> {
+            p.setOldBallPosX(ball.getPosX());
+            p.setOldBallPosY(ball.getPosY());
+            p.setBallGlobalPosX(ball.getPosX());
+            p.setBallGlobalPosY(ball.getPosY());
+            p.setOldBallGlobalPosX(ball.getPosX());
+            p.setOldBallGlobalPosY(ball.getPosY());
+            p.setCurrentBallVelocity(new Velocity(ball.getGlobalVelocity()));
+        });
+
+        updatePlayersWordState();
+        manager.getServerImitator().beforeHalf();
+        paintShapes();
     }
     
     /**
