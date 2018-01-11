@@ -43,7 +43,7 @@ public class Player extends MobileObject {
 
     private double interceptTurnAngle = 7;
     private double interceptDistanceBack = 2;
-    private double interceptMaxCycles = 200;
+    private double interceptMaxCycles = 100;
     private double turnCorrection = 3;
 
     private boolean ballKicked;
@@ -198,6 +198,38 @@ public class Player extends MobileObject {
 
     public double getOldBallPosX() {
         return oldBallPosX;
+    }
+
+    public void setOldBallGlobalPosX(double oldBallGlobalPosX) {
+        this.oldBallGlobalPosX = oldBallGlobalPosX;
+    }
+
+    public void setOldBallGlobalPosY(double oldBallGlobalPosY) {
+        this.oldBallGlobalPosY = oldBallGlobalPosY;
+    }
+
+    public void setOldBallPosX(double oldBallPosX) {
+        this.oldBallPosX = oldBallPosX;
+    }
+
+    public void setOldBallPosY(double oldBallPosY) {
+        this.oldBallPosY = oldBallPosY;
+    }
+
+    public void setCurrentBallVelocity(Velocity currentBallVelocity) {
+        this.currentBallVelocity = currentBallVelocity;
+    }
+
+    public double getInterceptMaxCycles() {
+        return interceptMaxCycles;
+    }
+
+    public void setBallGlobalPosX(double ballGlobalPosX) {
+        this.ballGlobalPosX = ballGlobalPosX;
+    }
+
+    public void setBallGlobalPosY(double ballGlobalPosY) {
+        this.ballGlobalPosY = ballGlobalPosY;
     }
 
     @Override
@@ -498,7 +530,7 @@ public class Player extends MobileObject {
         Player playerAfterAction = new Player(player);
         switch (cmd.getActionType()) {
             case "turn":
-                double angle = player.getGlobalBodyAngle() + predictedActAngle(action.getMoment());
+                double angle = player.getGlobalBodyAngle() + predictedActAngle(cmd.getMoment());
                 if (angle > 180) {
                     angle = -360 + angle;
                 } else {
@@ -597,6 +629,9 @@ public class Player extends MobileObject {
         Player playerAfterTurn = predictedPlayerStateAfterAction(this, turnBodyToPoint(ballPredictedGlobalPosition2));
         Player playerAfterDash = predictedPlayerStateAfterAction(playerAfterTurn, dashToPoint(ballPredictedGlobalPosition2));
         if (MyMath.distance(playerAfterDash, ballPredictedGlobalPosition2) < kickableDistance) {
+            if ("turn".equals(getAction().getActionType())) { // если предыдущее действие было поворотом, то нужно сделать dash
+                return dashToPoint(ballPredictedGlobalPosition2);
+            }
             return turnBodyToPoint(ballPredictedGlobalPosition2);
         }
 

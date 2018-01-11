@@ -292,12 +292,22 @@ public class MainFrame extends JFrame {
             Player player = (Player) playersComboBox.getSelectedItem();
             setPlayerInfo(manager.getServerImitator().findPlayerById(player.getPlayerId()));
             setBallInfo();
+
+            // обнуление информации о мяче для каждого игрока
+            Ball ball = manager.getServerImitator().getBall();
+            manager.getPlayerList().forEach(p -> {
+                p.setOldBallPosX(ball.getPosX());
+                p.setOldBallPosY(ball.getPosY());
+                p.setBallGlobalPosX(ball.getPosX());
+                p.setBallGlobalPosY(ball.getPosY());
+                p.setOldBallGlobalPosX(ball.getPosX());
+                p.setOldBallGlobalPosY(ball.getPosY());
+                p.setCurrentBallVelocity(ball.getGlobalVelocity());
+            });
+
             updatePlayersWordState();
             manager.getServerImitator().beforeHalf();
             paintShapes();
-            if (manager.getServerImitator().isIntercept()) {
-                JOptionPane.showMessageDialog(null, "Ball is intercepted");
-            }
         }
     }
     
@@ -324,9 +334,6 @@ public class MainFrame extends JFrame {
             refreshPlayerInfo();
             refreshBallInfo();
             paintShapes();
-            if (manager.getServerImitator().isIntercept()) {
-                JOptionPane.showMessageDialog(null, "Ball is intercepted");
-            }
         }
     }
 
@@ -341,9 +348,6 @@ public class MainFrame extends JFrame {
             refreshPlayerInfo();
             refreshBallInfo();
             paintShapes();
-            if (manager.getServerImitator().isIntercept()) {
-                JOptionPane.showMessageDialog(null, "Ball is intercepted");
-            }
         }
     }
 
@@ -453,15 +457,17 @@ public class MainFrame extends JFrame {
             Player agentPlayer = (Player) playersComboBox.getSelectedItem();
             switch ((ActionsEnum)actionComboBox.getSelectedItem()) {
                 case INTERSEPT:
-                    Action action;
                     while (!manager.getServerImitator().isIntercept()) {
-                        action = agentPlayer.intercept();
+                        Action action = agentPlayer.intercept();
                         agentPlayer.setAction(action);
 //                        manager.getAgentPlayer2().setAction(manager.getAgentPlayer2().intercept());
                         if (action != null) {
                             manager.getServerImitator().simulationStep();
                         } else {
-                            JOptionPane.showMessageDialog(null, "Can't intercept the ball: mainFrame");
+                            JOptionPane.showMessageDialog(null, "Мяч слишком далеко! " +
+                                    "Игрок не сможет его прехватить в течение заданного максимального " +
+                                    "количества циклов для перехвата, равного " + agentPlayer.getInterceptMaxCycles());
+                            break;
                         }
                         refreshPlayerInfo();
                         refreshBallInfo();

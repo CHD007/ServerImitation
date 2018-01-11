@@ -381,7 +381,7 @@ public class ServerImitator {
 
     public boolean isIntercept() {
         for (ServerPlayer serverPlayer : serverPlayers){
-            if (MyMath.distance(serverPlayer, ball) < ServerParameters.player_size + ServerParameters.ball_size + ServerParameters.kickable_margin + 1) {
+            if (MyMath.distance(serverPlayer, ball) < ServerParameters.player_size + ServerParameters.ball_size + ServerParameters.kickable_margin) {
                 return true;
             } else {
                 return false;
