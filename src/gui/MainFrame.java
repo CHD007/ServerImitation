@@ -87,6 +87,7 @@ public class MainFrame extends JFrame {
         box.add(createFieldBox());
         box.add(Box.createVerticalStrut(10));
         box.add(Box.createVerticalGlue());
+        refreshPlayerInfo();
         add(box, BorderLayout.NORTH);
     }
 
@@ -111,7 +112,6 @@ public class MainFrame extends JFrame {
         textFieldPlayerVelocity.setColumns(4);
         textFieldPlayerAngle = new JFormattedTextField(NumberFormat.getNumberInstance());
         textFieldPlayerAngle.setColumns(6);
-        refreshPlayerInfo();
         box1.add(objectInfoBox("Состояние игрока", textFieldPlayerPosX, textFieldPlayerPosY,
                 textFieldPlayerVelocity, textFieldPlayerAngle));
         textFieldBallPosX = new JFormattedTextField(NumberFormat.getNumberInstance());
@@ -603,6 +603,12 @@ public class MainFrame extends JFrame {
         textFieldPlayerPosY.setValue(playerToView.getPosY());
         textFieldPlayerAngle.setValue(playerToView.getGlobalBodyAngle());
         textFieldPlayerVelocity.setValue(MyMath.velocityModule(playerToView.getGlobalVelocity()));
+        if (player.getObjectToPlayWith() != null) {
+            playersForActionComboBox.setSelectedItem(player.getObjectToPlayWith());
+        }
+        if (player.getAction() != null) {
+            actionComboBox.setSelectedItem(player.getGlobalActionType());
+        }
     }
 
     public void refreshBallInfo() {
