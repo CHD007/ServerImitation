@@ -654,11 +654,15 @@ public class Player extends MobileObject {
     public Action movToPos(FieldObject point) {
         double angle = getRelativeAngleToGlobalPoint(point);
         double dist = MyMath.distance(this, point);
-        if ((Math.abs(angle) < interceptTurnAngle) ||
-                (Math.abs(MyMath.normalizeAngle(angle + interceptTurnAngle)) < interceptTurnAngle & dist < interceptDistanceBack)) {
-            return dashToPoint(point);
+        if (dist > ServerParameters.player_rand) {
+            if ((Math.abs(angle) < interceptTurnAngle) ||
+                    (Math.abs(MyMath.normalizeAngle(angle + interceptTurnAngle)) < interceptTurnAngle & dist < interceptDistanceBack)) {
+                return dashToPoint(point);
+            } else {
+                return turnBodyToPoint(point);
+            }
         } else {
-            return turnBodyToPoint(point);
+            return null; // ничего не делать - уже прибежали в нужную точку
         }
     }
 
@@ -948,5 +952,21 @@ public class Player extends MobileObject {
             ballKicked = false;
             return movToPos(new FieldObject(ballGlobalPosX, ballGlobalPosY));
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Player)) {
+            return false;
+        }
+        Player player = (Player) obj;
+        return this.getPlayerId() == player.getPlayerId();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + playerId;
+        return result;
     }
 }

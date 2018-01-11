@@ -384,6 +384,7 @@ public class MainFrame extends JFrame {
 //                    Action action = manager.getAgentPlayer().intercept();
                     Action action = agentPlayer.intercept();
                     agentPlayer.setAction(action);
+                    agentPlayer.setGlobalActionType(ActionsEnum.INTERSEPT);
 
                     logs.writeLog(manager.getServerImitator().getServerPlayers().get(0), manager.getServerImitator().getBall(), manager.getServerImitator().getTime());
                     if (manager.getServerImitator().isIntercept()) {
@@ -397,6 +398,7 @@ public class MainFrame extends JFrame {
                         Number pointY = (Number)textFieldPointForPassPosY.getValue();
                         Number circles = (Number)textFieldTactsNumber.getValue();
                         agentPlayer.setAction(agentPlayer.pass(pointX.doubleValue(), pointY.doubleValue(), circles.intValue()));
+                        agentPlayer.setGlobalActionType(ActionsEnum.PASS);
                     }
                     break;
 
@@ -407,11 +409,13 @@ public class MainFrame extends JFrame {
                         Number circles = (Number)textFieldTactsNumber.getValue();
                         Action action1 = agentPlayer.dribbling(pointX.doubleValue(), pointY.doubleValue(), circles.intValue());
                         agentPlayer.setAction(action1);
+                        agentPlayer.setGlobalActionType(ActionsEnum.DRIBBLING);
                     }
                     break;
 
                 case KEEP_TO_OFFSIDE:
                     agentPlayer.setAction(agentPlayer.keepInLineWithLastDefender((AdditionalActionParameters) additionalparameters.getSelectedItem()));
+                    agentPlayer.setGlobalActionType(ActionsEnum.KEEP_TO_OFFSIDE);
                     break;
 
                 case DASH:
@@ -419,6 +423,7 @@ public class MainFrame extends JFrame {
                         Number pointX = (Number)textFieldPointForPassPosX.getValue();
                         Number pointY = (Number)textFieldPointForPassPosY.getValue();
                         agentPlayer.setAction(agentPlayer.movToPos(new FieldObject(pointX.doubleValue(), pointY.doubleValue())));
+                        agentPlayer.setGlobalActionType(ActionsEnum.DASH);
                     }
                     break;
 
@@ -428,25 +433,53 @@ public class MainFrame extends JFrame {
                         Number pointY = (Number)textFieldPointForPassPosY.getValue();
                         FieldObject opponentToBlock = new FieldObject(pointX.doubleValue(), pointY.doubleValue());
                         Action blockOpponent = agentPlayer.blockOpponent(opponentToBlock);
+                        agentPlayer.setGlobalActionType(ActionsEnum.BLOCK_OPPONENT);
                         agentPlayer.setAction(blockOpponent);
                     }
                     break;
 
                 case NOTHING:
                     agentPlayer.setAction(null);
+                    agentPlayer.setGlobalActionType(ActionsEnum.NOTHING);
                     break;
 
                 case OUTPLAYING:
                     Action outplayingAction = agentPlayer.outplayingOpponent(manager.getPlayerList().get(2),
                             (AdditionalActionParameters) additionalparameters.getSelectedItem());
                     agentPlayer.setAction(outplayingAction);
+                    agentPlayer.setGlobalActionType(ActionsEnum.OUTPLAYING);
                     break;
 
                 case MARK_OPPONENT:
                     Action markOpponentAction = agentPlayer.markOpponent(manager.getPlayerList().get(1));
                     agentPlayer.setAction(markOpponentAction);
+                    agentPlayer.setGlobalActionType(ActionsEnum.MARK_OPPONENT);
                     break;
             }
+
+            manager.getPlayerList()
+                    .stream()
+                    .filter(player -> !player.equals(agentPlayer))
+                    .forEach(player -> {
+                        switch (player.getGlobalActionType()) {
+                            case OUTPLAYING:
+                                Action outplayingAction = player.outplayingOpponent(manager.getPlayerList().get(2),
+                                        (AdditionalActionParameters) additionalparameters.getSelectedItem());
+                                player.setAction(outplayingAction);
+                                player.setGlobalActionType(ActionsEnum.OUTPLAYING);
+                                break;
+
+                            case MARK_OPPONENT:
+                                Action markOpponentAction = player.markOpponent(manager.getPlayerList().get(1));
+                                player.setAction(markOpponentAction);
+                                player.setGlobalActionType(ActionsEnum.MARK_OPPONENT);
+                                break;
+
+                            default:
+                                break;
+                        }
+                    });
+
             manager.getServerImitator().simulationStep();
             paintShapes();
             refreshBallInfo();
