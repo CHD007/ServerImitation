@@ -36,7 +36,7 @@ public class MainFrame extends JFrame {
     private JFormattedTextField textFieldBallAngle;
     private JComboBox<Player> playersComboBox;
     private JComboBox<Player> playersForActionComboBox;
-    private JComboBox actionComboBox;
+    private JComboBox<ActionsEnum> actionComboBox;
     private JComboBox additionalparameters;
     private JButton startButton;
     private JButton dashButton;
@@ -220,7 +220,7 @@ public class MainFrame extends JFrame {
     }
 
     private void initializeActionComboBox() {
-        actionComboBox = new JComboBox();
+        actionComboBox = new JComboBox<>();
         Arrays.stream(ActionsEnum.values()).forEach(actionsEnum -> actionComboBox.addItem(actionsEnum));
     }
 
