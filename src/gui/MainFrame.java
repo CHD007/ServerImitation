@@ -37,7 +37,6 @@ public class MainFrame extends JFrame {
     private JComboBox<Player> playersComboBox;
     private JComboBox actionComboBox;
     private JComboBox additionalparameters;
-    private JCheckBox autoSimulationCheckBox;
     private JButton startButton;
     private JButton dashButton;
     private JButton turnButton;
@@ -238,11 +237,6 @@ public class MainFrame extends JFrame {
         box.add(actionComboBox);
         box.add(Box.createHorizontalStrut(10));
 
-        autoSimulationCheckBox = new JCheckBox("Выполнение по шагам");
-        autoSimulationCheckBox.setSelected(false);
-        autoSimulationCheckBox.addActionListener((ActionEvent e) ->
-                stepButton.setEnabled(autoSimulationCheckBox.isSelected()));
-        box.add(autoSimulationCheckBox);
         box.add(Box.createHorizontalStrut(10));
 
         startButton = new JButton("Подготовить");
@@ -261,7 +255,6 @@ public class MainFrame extends JFrame {
 //        box.add(Box.createHorizontalStrut(10));
 
         stepButton = new JButton("step");
-        stepButton.setEnabled(autoSimulationCheckBox.isSelected());
         stepButton.addActionListener(new BtnStepListener());
         box.add(stepButton);
         box.add(Box.createHorizontalStrut(10));
