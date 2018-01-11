@@ -200,6 +200,10 @@ public class Player extends MobileObject {
         return oldBallPosX;
     }
 
+    public MobileObject getObjectToPlayWith() {
+        return objectToPlayWith;
+    }
+
     public void setOldBallGlobalPosX(double oldBallGlobalPosX) {
         this.oldBallGlobalPosX = oldBallGlobalPosX;
     }

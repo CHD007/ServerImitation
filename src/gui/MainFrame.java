@@ -35,6 +35,7 @@ public class MainFrame extends JFrame {
     private JFormattedTextField textFieldBallVelocity;
     private JFormattedTextField textFieldBallAngle;
     private JComboBox<Player> playersComboBox;
+    private JComboBox<Player> playersForActionComboBox;
     private JComboBox actionComboBox;
     private JComboBox additionalparameters;
     private JButton startButton;
@@ -191,6 +192,10 @@ public class MainFrame extends JFrame {
         objectInfoBox.add(Box.createHorizontalStrut(10));
         objectInfoBox.add(new JLabel("Кол-во тактов: "));
         objectInfoBox.add(tactsNumber);
+
+        objectInfoBox.add(Box.createHorizontalStrut(10));
+        objectInfoBox.add(new JLabel("Опекун/Опекаемый"));
+        objectInfoBox.add(playersForActionComboBox);
         
         objectInfoBox.add(Box.createHorizontalStrut(10));
         objectInfoBox.add(new JLabel("Доп. параметры: "));
@@ -221,7 +226,13 @@ public class MainFrame extends JFrame {
 
     private void initializePlayersComboBox() {
         playersComboBox = new JComboBox<>();
-        manager.getPlayerList().forEach(p -> playersComboBox.addItem(p));
+        playersForActionComboBox = new JComboBox<>();
+
+        manager.getPlayerList().forEach(p -> {
+            playersComboBox.addItem(p);
+            playersForActionComboBox.addItem(p);
+        });
+
         playersComboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -277,7 +288,7 @@ public class MainFrame extends JFrame {
     }
 
     public void paintShapes() {
-            fieldComponent.paint(fieldComponent.getGraphics());
+        fieldComponent.paint(fieldComponent.getGraphics());
     }
 
     public class BtnStartListener implements ActionListener {
@@ -351,13 +362,7 @@ public class MainFrame extends JFrame {
 
     private void updateActionForAllPlayersExceptGivenPlayer(Player agentPlayer) {
         manager.getPlayerList().stream()
-                .filter(p -> p.getAction() != null)
-                .filter(p -> {
-                    if (agentPlayer == null) {
-                        return true;
-                    }
-                    return p.getPlayerId() != agentPlayer.getPlayerId();
-                })
+                .filter(p -> !p.equals(agentPlayer))
                 .forEach(Player::updateAction);
     }
 
@@ -365,8 +370,6 @@ public class MainFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Player agentPlayer = (Player) playersComboBox.getSelectedItem();
-
-            updateActionForAllPlayersExceptGivenPlayer(agentPlayer);
             
             if (agentPlayer != null) {
                 agentPlayer.setGlobalActionType((ActionsEnum) actionComboBox.getSelectedItem());
@@ -437,41 +440,20 @@ public class MainFrame extends JFrame {
                     break;
 
                 case OUTPLAYING:
-                    Action outplayingAction = agentPlayer.outplayingOpponent(manager.getPlayerList().get(2),
+                    Action outplayingAction = agentPlayer.outplayingOpponent((Player) playersForActionComboBox.getSelectedItem(),
                             (AdditionalActionParameters) additionalparameters.getSelectedItem());
                     agentPlayer.setAction(outplayingAction);
                     agentPlayer.setGlobalActionType(ActionsEnum.OUTPLAYING);
                     break;
 
                 case MARK_OPPONENT:
-                    Action markOpponentAction = agentPlayer.markOpponent(manager.getPlayerList().get(1));
+                    Action markOpponentAction = agentPlayer.markOpponent((Player) playersForActionComboBox.getSelectedItem());
                     agentPlayer.setAction(markOpponentAction);
                     agentPlayer.setGlobalActionType(ActionsEnum.MARK_OPPONENT);
                     break;
             }
 
-            manager.getPlayerList()
-                    .stream()
-                    .filter(player -> !player.equals(agentPlayer))
-                    .forEach(player -> {
-                        switch (player.getGlobalActionType()) {
-                            case OUTPLAYING:
-                                Action outplayingAction = player.outplayingOpponent(manager.getPlayerList().get(2),
-                                        (AdditionalActionParameters) additionalparameters.getSelectedItem());
-                                player.setAction(outplayingAction);
-                                player.setGlobalActionType(ActionsEnum.OUTPLAYING);
-                                break;
-
-                            case MARK_OPPONENT:
-                                Action markOpponentAction = player.markOpponent(manager.getPlayerList().get(1));
-                                player.setAction(markOpponentAction);
-                                player.setGlobalActionType(ActionsEnum.MARK_OPPONENT);
-                                break;
-
-                            default:
-                                break;
-                        }
-                    });
+            updateActionForAllPlayersExceptGivenPlayer(agentPlayer);
 
             manager.getServerImitator().simulationStep();
             paintShapes();
