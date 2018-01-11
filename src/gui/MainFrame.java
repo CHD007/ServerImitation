@@ -251,13 +251,13 @@ public class MainFrame extends JFrame {
         box.add(Box.createHorizontalStrut(10));
         dashButton = new JButton("dash");
         dashButton.addActionListener(new BtnDashListener());
-        box.add(dashButton);
-        box.add(Box.createHorizontalStrut(10));
+//        box.add(dashButton);
+//        box.add(Box.createHorizontalStrut(10));
 
         turnButton = new JButton("turn");
         turnButton.addActionListener(new BtnTurnListener());
-        box.add(turnButton);
-        box.add(Box.createHorizontalStrut(10));
+//        box.add(turnButton);
+//        box.add(Box.createHorizontalStrut(10));
 
         stepButton = new JButton("step");
         stepButton.setEnabled(autoSimulationCheckBox.isSelected());
@@ -302,7 +302,7 @@ public class MainFrame extends JFrame {
                 p.setBallGlobalPosY(ball.getPosY());
                 p.setOldBallGlobalPosX(ball.getPosX());
                 p.setOldBallGlobalPosY(ball.getPosY());
-                p.setCurrentBallVelocity(ball.getGlobalVelocity());
+                p.setCurrentBallVelocity(new Velocity(ball.getGlobalVelocity()));
             });
 
             updatePlayersWordState();
