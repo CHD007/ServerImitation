@@ -792,8 +792,8 @@ public class Player extends MobileObject {
                 distanceBetweenOppositePlayers, distanceBetweenThisPlayerAndPlayerWithBall);
         double CS = distanceBetweenThisPlyaerAndPlayerToBlock * Math.cos(angleBCS);
         double angleHCS = Math.acos(Math.abs((playerWithBall.getPosX() - opponentToBlock.getPosX())) / distanceBetweenOppositePlayers);
-        double xDifference = CS * Math.cos(angleHCS);
-        double yDifference = CS * Math.sin(angleHCS);
+        double xDifference = Math.abs(CS * Math.cos(angleHCS));
+        double yDifference = Math.abs(CS * Math.sin(angleHCS));
 
         FieldObject distination = new FieldObject();
         if (opponentToBlock.getPosX() >= playerWithBall.getPosX()) {
