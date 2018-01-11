@@ -424,14 +424,9 @@ public class MainFrame extends JFrame {
                     break;
 
                 case BLOCK_OPPONENT:
-                    if (validateInitialDataBox()) {
-                        Number pointX = (Number)textFieldPointForPassPosX.getValue();
-                        Number pointY = (Number)textFieldPointForPassPosY.getValue();
-                        FieldObject opponentToBlock = new FieldObject(pointX.doubleValue(), pointY.doubleValue());
-                        Action blockOpponent = agentPlayer.blockOpponent(opponentToBlock);
-                        agentPlayer.setGlobalActionType(ActionsEnum.BLOCK_OPPONENT);
-                        agentPlayer.setAction(blockOpponent);
-                    }
+                    Action blockOpponent = agentPlayer.blockOpponent((Player) playersForActionComboBox.getSelectedItem());
+                    agentPlayer.setGlobalActionType(ActionsEnum.BLOCK_OPPONENT);
+                    agentPlayer.setAction(blockOpponent);
                     break;
 
                 case NOTHING:
