@@ -935,7 +935,7 @@ public class Player extends MobileObject {
      * @return true - если мяч находится в kickable area, false - инача
      */
     private boolean isBallKickableForPlayer() {
-        FieldObject ball = new FieldObject(ballPosX, ballPosY);
+        FieldObject ball = new FieldObject(ballGlobalPosX, ballGlobalPosY);
         return MyMath.distance(this, ball) <
                 (ServerParameters.ball_size + ServerParameters.player_size + ServerParameters.kickable_margin);
     }
@@ -945,10 +945,8 @@ public class Player extends MobileObject {
             ballKicked = true;
             return pass(x, y, circles - 1);
         } else {
-            Action action = new Action();
-            action.setActionType("dash");
-            action.setPower(getPowerForDash(x, y));
-            return action;
+            ballKicked = false;
+            return movToPos(new FieldObject(ballGlobalPosX, ballGlobalPosY));
         }
     }
 }
