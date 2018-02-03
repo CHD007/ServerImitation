@@ -96,6 +96,7 @@ public class MyMath {
      * @param x кооридната x точки, для которой нужно получить относительную координату
      * @param y кооридната y точки, для которой нужно получить относительную координату
      * @param angle угол поворота координаты
+     * http://www.pm298.ru/dekart.php
      * @return относительная коориданата x (координата по x точки в новой системе отсчета)
      */
     public static double relativeX(double a, double b, double x, double y, double angle) {
@@ -109,6 +110,7 @@ public class MyMath {
      * @param x кооридната x точки, для которой нужно получить относительную координату
      * @param y кооридната y точки, для которой нужно получить относительную координату
      * @param angle угол поворота координаты
+     * http://www.pm298.ru/dekart.php
      * @return относительная коориданата y (координата по y точки в новой системе отсчета)
      */
     public static double relativeY(double a, double b, double x, double y, double angle) {
@@ -122,6 +124,7 @@ public class MyMath {
      * @param x координата x точки в системе координат игрока
      * @param y кооридната y точки в системе координта игрока
      * @param angle угол поворота системы координат игрока (глобальный угол поворота тела + угол поворота головы относительно тела)
+     * http://www.pm298.ru/dekart.php
      * @return координата x точки в глобальной системе координат
      */
     public static double unRelativeX(double a, double b, double x, double y, double angle) {
@@ -135,6 +138,7 @@ public class MyMath {
      * @param x координата x точки в системе координат игрока
      * @param y кооридната y точки в системе координта игрока
      * @param angle угол поворота системы координат игрока (глобальный угол поворота тела + угол поворота головы относительно тела)
+     * http://www.pm298.ru/dekart.php
      * @return координата y точки в глобальной системе координат
      */
     public static double unRelativeY(double a, double b, double x, double y, double angle) {
@@ -197,5 +201,18 @@ public class MyMath {
     public static double getAngleInRadiansByCosTheorem(double firstAdjoiningSide, double secondAdjoingSide, double opposingSide) {
         return Math.acos((Math.pow(firstAdjoiningSide, 2) + Math.pow(secondAdjoingSide, 2) - Math.pow(opposingSide, 2))
                 / (2 * firstAdjoiningSide * secondAdjoingSide));
+    }
+
+    /**
+     * Проверяет соответствует ли позиция игрока {@code playerPosition} заданной позиции {@code positionToMove}
+     * с учетом шума, добовляемого сервером.
+     *
+     * @param playerPosition текущая позиция игрока
+     * @param positionToMove позиция, с которой идет сравнение
+     * @return true - позиции равны с учетом шума, false - позиции не равны
+     */
+    public static boolean isPlayerPositionEqualsGivenPositionDueToServerRand(FieldObject playerPosition, FieldObject positionToMove) {
+        return Math.abs(playerPosition.getPosX() - positionToMove.getPosX()) <= ServerParameters.player_rand
+                && Math.abs(playerPosition.getPosY() - positionToMove.getPosY()) <= ServerParameters.player_rand;
     }
 }

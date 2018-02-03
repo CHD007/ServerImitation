@@ -789,9 +789,20 @@ public class Player extends MobileObject {
         } else {
             playerWithBall = new FieldObject(ballGlobalPosX, ballGlobalPosY);
         }
-        double distanceBetweenOppositePlayers = MyMath.distance(opponentToBlock, playerWithBall);
+        FieldObject destination = getPointToMoveToBlock(opponentToBlock, playerWithBall);
+        return movToPos(destination);
+    }
+
+    public FieldObject getPointToMoveToBlock(FieldObject opponentToBlock, FieldObject thirdPointOfTriangle) {
+        /*
+         * Вычислим стороны треугольника, образованного тремя объектами:
+         *  A) игрок, владеющий мячом
+         *  B) наш игрок, который будет блокировать
+         *  С) игрок, которого нужно блокировать
+         */
+        double distanceBetweenOppositePlayers = MyMath.distance(opponentToBlock, thirdPointOfTriangle);
         double distanceBetweenThisPlyaerAndPlayerToBlock = MyMath.distance(opponentToBlock, this);
-        double distanceBetweenThisPlayerAndPlayerWithBall = MyMath.distance(playerWithBall, this);
+        double distanceBetweenThisPlayerAndPlayerWithBall = MyMath.distance(thirdPointOfTriangle, this);
 
         /*
          * Вычисление координат точки для бега
@@ -799,22 +810,22 @@ public class Player extends MobileObject {
         double angleBCS = MyMath.getAngleInRadiansByCosTheorem(distanceBetweenThisPlyaerAndPlayerToBlock,
                 distanceBetweenOppositePlayers, distanceBetweenThisPlayerAndPlayerWithBall);
         double CS = distanceBetweenThisPlyaerAndPlayerToBlock * Math.cos(angleBCS);
-        double angleHCS = Math.acos(Math.abs((playerWithBall.getPosX() - opponentToBlock.getPosX())) / distanceBetweenOppositePlayers);
+        double angleHCS = Math.acos(Math.abs((thirdPointOfTriangle.getPosX() - opponentToBlock.getPosX())) / distanceBetweenOppositePlayers);
         double xDifference = Math.abs(CS * Math.cos(angleHCS));
         double yDifference = Math.abs(CS * Math.sin(angleHCS));
 
         FieldObject distination = new FieldObject();
-        if (opponentToBlock.getPosX() >= playerWithBall.getPosX()) {
+        if (opponentToBlock.getPosX() >= thirdPointOfTriangle.getPosX()) {
             distination.setPosX(opponentToBlock.getPosX() - xDifference);
         } else {
             distination.setPosX(opponentToBlock.getPosX() + xDifference);
         }
-        if (opponentToBlock.getPosY() >= playerWithBall.getPosY()) {
+        if (opponentToBlock.getPosY() >= thirdPointOfTriangle.getPosY()) {
             distination.setPosY(opponentToBlock.getPosY() - yDifference);
         } else {
             distination.setPosY(opponentToBlock.getPosY() + yDifference);
         }
-        return movToPos(distination);
+        return distination;
     }
 
     public Optional<FieldObject> getPlayerWithBall() {
@@ -844,6 +855,9 @@ public class Player extends MobileObject {
             int predictNrCyclesToPoint = predictNrCyclesToPoint(positionToMovOnMarkAction);
             positionToMovOnMarkAction = getPositionToMovOnMarkAction(predictPlayerStateAfterNCycles(playerToMark, predictNrCyclesToPoint));
         }
+        if (MyMath.isPlayerPositionEqualsGivenPositionDueToServerRand(this, positionToMovOnMarkAction)) {
+            return movToPos(this);
+        }
         return movToPos(positionToMovOnMarkAction);
     }
 
@@ -860,32 +874,7 @@ public class Player extends MobileObject {
             ourGoal.setPosX(-ourGoal.getPosX());
         }
 
-        double distanceBetweenOpponentAndOurGoal = MyMath.distance(playerToMark, ourGoal);
-        double distanceBetweenOpponentAndMe = MyMath.distance(this, playerToMark);
-        double distanceBetweenMeAndOurGoal = MyMath.distance(this, ourGoal);
-        double angleBetweenMeAndOurGoalToOpponentInRadians =
-                MyMath.getAngleInRadiansByCosTheorem(distanceBetweenOpponentAndOurGoal, distanceBetweenOpponentAndMe,
-                        distanceBetweenMeAndOurGoal);
-        double angleBetweenMeAndOpponentToPointToMovInRadians =
-                Math.toRadians(90.0 - Math.toDegrees(angleBetweenMeAndOurGoalToOpponentInRadians));
-        double distanceToPointToMov = Math.cos(angleBetweenMeAndOpponentToPointToMovInRadians) * distanceBetweenOpponentAndMe;
-        double angleBetweenOurGoalAndOpponentToMeInRadians =
-                MyMath.getAngleInRadiansByCosTheorem(distanceBetweenOpponentAndMe, distanceBetweenMeAndOurGoal,
-                        distanceBetweenOpponentAndOurGoal);
-
-        double relativeAngleToPointInDegrees;
-        double relativeAngleToGlobalPoint = getRelativeAngleToGlobalPoint(ourGoal);
-        if (playerToMark.getPosY() <= getPosY()) {
-            relativeAngleToPointInDegrees = relativeAngleToGlobalPoint - (Math.toDegrees(angleBetweenOurGoalAndOpponentToMeInRadians) - Math.toDegrees(Math.acos(distanceToPointToMov/distanceBetweenOpponentAndMe)));
-            // угол к точке отрицателен
-        } else {
-            // угол к точке положителен
-            relativeAngleToPointInDegrees = relativeAngleToGlobalPoint + (Math.toDegrees(angleBetweenOurGoalAndOpponentToMeInRadians) - Math.toDegrees(Math.acos(distanceToPointToMov/distanceBetweenOpponentAndMe)));
-        }
-        FieldObject pointToMovRelativeToPlayer = MyMath.polarToDecart(distanceToPointToMov, Math.toRadians(relativeAngleToPointInDegrees));
-        double globalPosXToMov = MyMath.unRelativeX(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
-        double globalPosYToMov = MyMath.unRelativeY(getPosX(), getPosY(), pointToMovRelativeToPlayer.getPosX(), pointToMovRelativeToPlayer.getPosY(), getGlobalBodyAngle());
-        return new FieldObject(globalPosXToMov, globalPosYToMov);
+        return getPointToMoveToBlock(playerToMark, ourGoal);
     }
 
     /**
