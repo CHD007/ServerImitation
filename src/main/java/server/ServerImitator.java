@@ -46,12 +46,14 @@ public class ServerImitator {
         serverPlayer.setRecovery(ServerParameters.recover_max);
         serverPlayer.setStamina(ServerParameters.stamina_max);
         serverPlayers.add(serverPlayer);
-        if (agentPlayer.getCommand() == Command.OPPOSSITE) {
-            serverPlayers.stream()
-                    .map(ServerPlayer::getAgentPlayer)
-                    .filter(p -> p.getCommand() == Command.OUR)
-                    .forEach(p -> p.addOppositeTeamPlayer(serverPlayer));
-        }
+
+        serverPlayers.stream()
+                .map(ServerPlayer::getAgentPlayer)
+                .filter(p -> p.getCommand() != agentPlayer.getCommand())
+                .forEach(p -> {
+                    p.addOppositeTeamPlayer(serverPlayer.getAgentPlayer());
+                    serverPlayer.getAgentPlayer().addOppositeTeamPlayer(p);
+                });
     }
 
     /**
