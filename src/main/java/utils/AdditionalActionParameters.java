@@ -8,7 +8,10 @@ package utils;
 public enum AdditionalActionParameters {
     LEFT("Слева"),
     RIGHT("Справа"),
-    BACK("Сзади");
+    BACK("Сзади"),
+    IN_DEPTH_ON_THE_RIGHT("Забежать за спину справа"),
+    IN_DEPTH_ON_THE_LEFT("Забежать за спину слева"),
+    ;
     
     private String description;
     

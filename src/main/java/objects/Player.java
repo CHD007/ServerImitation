@@ -8,6 +8,7 @@ import utils.ActionsEnum;
 import utils.AdditionalActionParameters;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -739,8 +740,16 @@ public class Player extends MobileObject {
      * @return последний защитник
      */
     public Player getLastDefender() {
-        oppositeTeamPlayers.sort((p1, p2) -> -Double.valueOf(p1.getPosX()).compareTo(p2.getPosX()));
-        return oppositeTeamPlayers.get(0);
+        Optional<Player> lastDefender;
+        if (ourFieldPart == FieldPart.LEFT) {
+            // значит у противника правая сторона
+             lastDefender = oppositeTeamPlayers.stream()
+                    .max(Comparator.comparingDouble(Player::getPosX));
+        } else {
+            lastDefender = oppositeTeamPlayers.stream()
+                    .min(Comparator.comparingDouble(Player::getPosX));
+        }
+        return lastDefender.orElseThrow(UnsupportedOperationException::new);
     }
 
     /**
@@ -783,13 +792,7 @@ public class Player extends MobileObject {
          *  С) игрок, которого нужно блокировать
          */
         Optional<FieldObject> playerWithBallOptional = getPlayerWithBall();
-        FieldObject playerWithBall;
-        if (playerWithBallOptional.isPresent()) {
-            playerWithBall = playerWithBallOptional.get();
-        } else {
-            playerWithBall = new FieldObject(ballGlobalPosX, ballGlobalPosY);
-        }
-        FieldObject destination = getPointToMoveToBlock(opponentToBlock, playerWithBall);
+        FieldObject destination = getPointToMoveToBlock(opponentToBlock, playerWithBallOptional.orElse(new FieldObject(ballGlobalPosX, ballGlobalPosY)));
         return movToPos(destination);
     }
 
@@ -869,12 +872,22 @@ public class Player extends MobileObject {
      * @return точка, в которую нужно бежать
      */
     private FieldObject getPositionToMovOnMarkAction(FieldObject playerToMark) {
+        FieldObject ourGoal = getOurGoal();
+        return getPointToMoveToBlock(playerToMark, ourGoal);
+    }
+
+    private FieldObject getOurGoal() {
         FieldObject ourGoal = new FieldObject((double) ServerParameters.FIELD_WIDTH / 2.0, 0.0);
         if (FieldPart.LEFT.equals(ourFieldPart)) {
             ourGoal.setPosX(-ourGoal.getPosX());
         }
+        return ourGoal;
+    }
 
-        return getPointToMoveToBlock(playerToMark, ourGoal);
+    private FieldObject getOpponentsGoal() {
+        FieldObject opponentsGoal = getOurGoal();
+        opponentsGoal.setPosX(-opponentsGoal.getPosX());
+        return opponentsGoal;
     }
 
     /**
@@ -892,22 +905,44 @@ public class Player extends MobileObject {
         objectToPlayWith = opponentToOutplaying;
         this.actionParameter = actionParameter;
         double smallDeltaToBeSure = 1;
-        double posY;
-        double posX;
+        double posY = 0.0;
+        double posX = 0.0;
         FieldObject positionToMov;
+        Player lastDefender = getLastDefender();
+        boolean opponentIsLastDefender = MyMath.isPlayerPositionEqualsGivenPositionDueToServerRand(opponentToOutplaying, lastDefender);
+
+        // задаем основу координаты x
+        if (opponentIsLastDefender) {
+            posX = opponentToOutplaying.getPosX();
+        } else {
+            posX = lastDefender.getPosX();
+        }
+
+        // правим координату x так, чтобы точно не попасть в оффсайд
+        if (ourFieldPart == FieldPart.LEFT) {
+            posX = posX - smallDeltaToBeSure;
+        } else {
+            posX = posX + smallDeltaToBeSure;
+        }
 
         switch (actionParameter) {
             case LEFT:
-                posY = opponentToOutplaying.getPosY() - ServerParameters.player_size - smallDeltaToBeSure;
-                posX = opponentToOutplaying.getPosX() - smallDeltaToBeSure;
-                positionToMov = new FieldObject(posX, posY);
-                return movToPos(positionToMov);
-
             case RIGHT:
-                posY = opponentToOutplaying.getPosY() + ServerParameters.player_size + smallDeltaToBeSure;
-                posX = opponentToOutplaying.getPosX() - smallDeltaToBeSure;
-                positionToMov = new FieldObject(posX, posY);
-                return movToPos(positionToMov);
+                Line lineBetweenMeAndOurGoal = Line.getLineByTwoPoints(this, getOpponentsGoal());
+                Line offsideLine = Line.getLineByAbscissa(lastDefender.getPosX());
+                Optional<FieldObject> intersectionPointWithLine = lineBetweenMeAndOurGoal.getIntersectionPointWithLine(offsideLine);
+                if (opponentIsLastDefender || !intersectionPointWithLine.isPresent()) {
+                    if (actionParameter == AdditionalActionParameters.LEFT) {
+                        posY = opponentToOutplaying.getPosY() - ServerParameters.player_size - smallDeltaToBeSure;
+                    } else {
+                        posY = opponentToOutplaying.getPosY() + ServerParameters.player_size + smallDeltaToBeSure;
+                    }
+                    positionToMov = new FieldObject(posX, posY);
+                } else {
+                    // TODO: 06.04.2018 обработать ситуацию, когда игрок уже находится в офсайде
+                    positionToMov = intersectionPointWithLine.get();
+                }
+                break;
 
             case BACK:
                 double distanceToGoBack = 5;
@@ -917,11 +952,13 @@ public class Player extends MobileObject {
                 } else {
                     posX = this.getPosX() + distanceToGoBack;
                 }
-                return movToPos(new FieldObject(posX, posY));
+                positionToMov = new FieldObject(posX, posY);
+                break;
 
             default:
-                return null;
+                positionToMov = this;
         }
+        return movToPos(positionToMov);
     }
 
     /**
