@@ -37,4 +37,22 @@ public class FieldObject {
     public void setPosY(double posY) {
         this.posY = posY;
     }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + Double.hashCode(posX);
+        result = 31 * result + Double.hashCode(posY);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof FieldObject)) {
+            return false;
+        }
+        FieldObject otherPoint = (FieldObject) obj;
+
+        return Double.compare(posX, otherPoint.posX) == 0 && Double.compare(posY, otherPoint.posY) == 0;
+    }
 }
