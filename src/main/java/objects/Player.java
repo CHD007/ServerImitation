@@ -755,27 +755,43 @@ public class Player extends MobileObject {
     /**
      * Держаться на линии последнего защитника
      *
+     * @param actionParameter параметр, задающий тактику для действия
      * @return действие "бежать в точку" с координатами, которые игрок вычислил
      */
     public Action keepInLineWithLastDefender(AdditionalActionParameters actionParameter) {
-        final int OFFSET = 10;
-        this.actionParameter = actionParameter;
+        final int offset = 10;
         Player lastDefender = getLastDefender();
-        FieldObject posToMove = new FieldObject(lastDefender.getPosX(), lastDefender.getPosY());
+        FieldObject posToMove = getPositionToMoveToKeepInLineWithPlayer(actionParameter, offset, lastDefender);
+        return movToPos(posToMove);
+    }
+
+    /**
+     * Находит позицию, в которую нужно бежать, чтобы держаться на линии последнего защитника
+     *
+     * @param actionParameter       доп. параметр, конкретизирующий действие (держаться слево или справо или оттянуться назад)
+     * @param offset                расстояние, на котором нужно держаться от игрока влево или вправо (зависит от доп. параметра)
+     * @param playerToKeepInLine    игрок, на линии которого нужно держаться
+     * @return
+     */
+    private FieldObject getPositionToMoveToKeepInLineWithPlayer(AdditionalActionParameters actionParameter, int offset,
+                                                                FieldObject playerToKeepInLine) {
+        this.actionParameter = actionParameter;
+
+        FieldObject posToMove = new FieldObject(playerToKeepInLine.getPosX(), playerToKeepInLine.getPosY());
         switch (actionParameter) {
             case LEFT:
-                posToMove.setPosY(posToMove.getPosY() - OFFSET);
+                posToMove.setPosY(posToMove.getPosY() - offset);
                 break;
 
             case RIGHT:
-                posToMove.setPosY(posToMove.getPosY() + OFFSET);
+                posToMove.setPosY(posToMove.getPosY() + offset);
                 break;
 
             case BACK:
-                posToMove.setPosX(posToMove.getPosX() - OFFSET);
+                posToMove.setPosX(posToMove.getPosX() - offset);
                 break;
         }
-        return movToPos(posToMove);
+        return posToMove;
     }
 
     /**
@@ -904,44 +920,21 @@ public class Player extends MobileObject {
     public Action outplayingOpponent(MobileObject opponentToOutplaying, AdditionalActionParameters actionParameter) {
         objectToPlayWith = opponentToOutplaying;
         this.actionParameter = actionParameter;
-        double smallDeltaToBeSure = 1;
         double posY = 0.0;
         double posX = 0.0;
         FieldObject positionToMov;
         Player lastDefender = getLastDefender();
         boolean opponentIsLastDefender = MyMath.isPlayerPositionEqualsGivenPositionDueToServerRand(opponentToOutplaying, lastDefender);
 
-        // задаем основу координаты x
-        if (opponentIsLastDefender) {
-            posX = opponentToOutplaying.getPosX();
-        } else {
-            posX = lastDefender.getPosX();
-        }
-
-        // правим координату x так, чтобы точно не попасть в оффсайд
-        if (ourFieldPart == FieldPart.LEFT) {
-            posX = posX - smallDeltaToBeSure;
-        } else {
-            posX = posX + smallDeltaToBeSure;
-        }
-
         switch (actionParameter) {
             case LEFT:
             case RIGHT:
-                Line lineBetweenMeAndOurGoal = Line.getLineByTwoPoints(this, getOpponentsGoal());
-                Line offsideLine = Line.getLineByAbscissa(lastDefender.getPosX());
-                Optional<FieldObject> intersectionPointWithLine = lineBetweenMeAndOurGoal.getIntersectionPointWithLine(offsideLine);
-                if (opponentIsLastDefender || !intersectionPointWithLine.isPresent()) {
-                    if (actionParameter == AdditionalActionParameters.LEFT) {
-                        posY = opponentToOutplaying.getPosY() - ServerParameters.player_size - smallDeltaToBeSure;
-                    } else {
-                        posY = opponentToOutplaying.getPosY() + ServerParameters.player_size + smallDeltaToBeSure;
-                    }
-                    positionToMov = new FieldObject(posX, posY);
-                } else {
-                    // TODO: 06.04.2018 обработать ситуацию, когда игрок уже находится в офсайде
-                    positionToMov = intersectionPointWithLine.get();
-                }
+                positionToMov = getPositionToMoveForRunToCenterTactic(lastDefender, opponentIsLastDefender, opponentToOutplaying);
+                break;
+
+            case IN_DEPTH_ON_THE_RIGHT:
+            case IN_DEPTH_ON_THE_LEFT:
+                positionToMov = getPositionToMoveForRunToBackTactic(lastDefender, opponentIsLastDefender, opponentToOutplaying, actionParameter);
                 break;
 
             case BACK:
@@ -959,6 +952,93 @@ public class Player extends MobileObject {
                 positionToMov = this;
         }
         return movToPos(positionToMov);
+    }
+
+    /**
+     * Алгоритм открытия под пас для тактики №1:
+     * "смещение по фронту аттаки в центр с дальнейшим смещение к вражеским воротам"
+     *
+     * @param lastDefender              последний защитник в линии обороны противника
+     * @param opponentIsLastDefender    является ли опекун последним защитником
+     * @param opponentToOutplaying      опекун
+     * @return  позиция на поле, в которую нужно бежать, для того, чтобы открыться под пас по заданой тактике
+     */
+    private FieldObject getPositionToMoveForRunToCenterTactic(Player lastDefender, boolean opponentIsLastDefender, MobileObject opponentToOutplaying) {
+        double smallDeltaToBeSure = 1;
+        double posY = 0.0;
+        double posX = 0.0;
+        // задаем основу координаты x
+        if (opponentIsLastDefender) {
+            posX = opponentToOutplaying.getPosX();
+        } else {
+            posX = lastDefender.getPosX();
+        }
+
+        // правим координату x так, чтобы точно не попасть в оффсайд
+        if (ourFieldPart == FieldPart.LEFT) {
+            posX = posX - smallDeltaToBeSure;
+        } else {
+            posX = posX + smallDeltaToBeSure;
+        }
+
+        Line lineBetweenMeAndOurGoal = Line.getLineByTwoPoints(this, getOpponentsGoal());
+        Line offsideLine = Line.getLineByAbscissa(lastDefender.getPosX());
+        Optional<FieldObject> intersectionPointWithLine = lineBetweenMeAndOurGoal.getIntersectionPointWithLine(offsideLine);
+        if (opponentIsLastDefender || !intersectionPointWithLine.isPresent()) {
+            if (actionParameter == AdditionalActionParameters.LEFT) {
+                posY = opponentToOutplaying.getPosY() - ServerParameters.player_size - smallDeltaToBeSure;
+            } else {
+                posY = opponentToOutplaying.getPosY() + ServerParameters.player_size + smallDeltaToBeSure;
+            }
+            return new FieldObject(posX, posY);
+        } else {
+            // TODO: 06.04.2018 обработать ситуацию, когда игрок уже находится в офсайде
+            return intersectionPointWithLine.get();
+        }
+    }
+
+    /**
+     * Алгоритм открытия под пас для тактики №2:
+     * "смещение по флангу в глубь с целью получить пас вразрез"
+     *
+     * @param lastDefender              последний защитник в линии обороны противника
+     * @param opponentIsLastDefender    является ли опекун последним защитником
+     * @param opponentToOutplaying      опекун
+     * @param actionParameter           параметр, указывающий на конктреную тактику
+     *                                  IN_DEPTH_ON_THE_RIGH или IN_DEPTH_ON_THE_LEFT
+     * @return позиция на поле, в которую нужно бежать, для того, чтобы открыться под пас по заданой тактике
+     */
+    private FieldObject getPositionToMoveForRunToBackTactic(Player lastDefender, boolean opponentIsLastDefender, MobileObject opponentToOutplaying,
+                                                            AdditionalActionParameters actionParameter) {
+        /*
+        * Переменная описывает разницу в координатах y текущего игрока и оппонента, которая должна быть, чтобы выполнять действие
+        * Если разница меньше, чем заданная величина, то пытаемся занаять положение справа или слева от опекуна (зависит от тактики).
+        * Т.к. если мы будем прямо, то уткнемся прямо в опекуна, а нам надо попытаться оббежать.
+        */
+        final int distanceToDecide = 2;
+        /*
+        * Расстояние, на котором надо держаться от опекуна
+        */
+        final int offsetToKeepInLine = 2;
+
+        if ((actionParameter == AdditionalActionParameters.IN_DEPTH_ON_THE_RIGHT && (this.getPosY() - opponentToOutplaying.getPosY()) < distanceToDecide)
+                || (actionParameter == AdditionalActionParameters.IN_DEPTH_ON_THE_RIGHT && opponentIsLastDefender)) {
+            // пытаемся занять положение справа от опекуна (для крайнего правого нападающего)
+            return getPositionToMoveToKeepInLineWithPlayer(AdditionalActionParameters.RIGHT, offsetToKeepInLine, opponentToOutplaying);
+        }
+
+        if ((actionParameter == AdditionalActionParameters.IN_DEPTH_ON_THE_LEFT && (this.getPosY() - opponentToOutplaying.getPosY()) > -distanceToDecide)
+                || (actionParameter == AdditionalActionParameters.IN_DEPTH_ON_THE_LEFT && opponentIsLastDefender)) {
+            // пытаемся занять положение слева от опекуна (для крайнего левого нападающего)
+            return getPositionToMoveToKeepInLineWithPlayer(AdditionalActionParameters.LEFT, offsetToKeepInLine, opponentToOutplaying);
+        }
+
+        // игрок может забежать за спину опекуну и опекун не последний защитник в линии обороны противника
+
+        Line offsideLine = Line.getLineByAbscissa(lastDefender.getPosX());
+        Line normalToOffsideLine = Line.getLineByOrdinate(this.getPosY());
+        Optional<FieldObject> intersectionPointWithLine = offsideLine.getIntersectionPointWithLine(normalToOffsideLine);
+        return intersectionPointWithLine.orElse(getPositionToMoveToKeepInLineWithPlayer(AdditionalActionParameters.BACK, 2, opponentToOutplaying));
     }
 
     /**
