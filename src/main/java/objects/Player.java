@@ -981,9 +981,9 @@ public class Player extends MobileObject {
             posX = posX + smallDeltaToBeSure;
         }
 
-        Line lineBetweenMeAndOurGoal = Line.getLineByTwoPoints(this, getOpponentsGoal());
+        Line lineBetweenMeAndOpponentGoal = Line.getLineByTwoPoints(this, getOpponentsGoal());
         Line offsideLine = Line.getLineByAbscissa(lastDefender.getPosX());
-        Optional<FieldObject> intersectionPointWithLine = lineBetweenMeAndOurGoal.getIntersectionPointWithLine(offsideLine);
+        Optional<FieldObject> intersectionPointWithLine = lineBetweenMeAndOpponentGoal.getIntersectionPointWithLine(offsideLine);
         if (opponentIsLastDefender || !intersectionPointWithLine.isPresent()) {
             if (actionParameter == AdditionalActionParameters.LEFT) {
                 posY = opponentToOutplaying.getPosY() - ServerParameters.player_size - smallDeltaToBeSure;
