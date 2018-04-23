@@ -724,7 +724,6 @@ public class Player extends MobileObject {
         // сила удара, передваемая команде kick
         double kickPower = velocityModule / actPower;
 
-//        double angleForKick = Math.toDegrees(Math.acos(relativeX/distanseBetweenPlayerAndPointForPass));
         double angleForKick = MyMath.polarAngle(relativeX, relativeY);
 
         Action action = new Action();

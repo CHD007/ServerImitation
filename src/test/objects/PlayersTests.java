@@ -30,8 +30,11 @@ public class PlayersTests {
 
     @Test
     public void outplayingOpponentBackActionTest() {
-        Action outplayingBackAction = player.outplayingOpponent(new MobileObject(), AdditionalActionParameters.BACK);
-        Assert.assertEquals(player.movToPos(new FieldObject(player.getPosX() + 5, player.getPosY())).getMoment(), outplayingBackAction.getMoment(), 0.5);
+        Player opponentToOutplay = new Player();
+        opponentToOutplay.setCommand(Command.OUR);
+        player.addOppositeTeamPlayer(opponentToOutplay);
+        Action outplayingBackAction = this.player.outplayingOpponent(new MobileObject(), AdditionalActionParameters.BACK);
+        Assert.assertEquals(this.player.movToPos(new FieldObject(this.player.getPosX() + 5, this.player.getPosY())).getMoment(), outplayingBackAction.getMoment(), 0.5);
     }
 
     /**
